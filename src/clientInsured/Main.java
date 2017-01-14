@@ -18,16 +18,11 @@ public class Main extends Application {
 			 URL url = getClass().getResource("MakeAppoint.fxml");
 			 AnchorPane pane = FXMLLoader.load( url );
 			 Scene scene = new Scene( pane );
-
 			 // setting the stage
 			 primaryStage.setScene( scene );
 			 primaryStage.setTitle( "Hello World Demo" );
 			 primaryStage.show();
-			//BorderPane root = new BorderPane();
-			//Scene scene = new Scene(root,400,400);
-			//scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-			//primaryStage.setScene(scene);
-			//primaryStage.show();
+
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
