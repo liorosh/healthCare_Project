@@ -15,6 +15,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import ocsf.server.*;
 
 /**
@@ -66,17 +68,19 @@ public class Server extends AbstractServer
    * @param client The connection from which the message originated.
    */
   public void handleMessageFromClient
-    (Object msg, ConnectionToClient client)
+    (/*enum Requests,*/Object msg, ConnectionToClient client)
   {
-	    System.out.println("Message received: " + msg + " from " + client);
-	    if(msg.equals("send")){
-	    	//sendToAllClients("Lior bitton id: 300411170 and miri shlaen id:310603394 .from haifa ");
+	  try {
+		  if( msg.equals("send"))
+		//logic.makeAppointments("2017-01-25 08:00","2017-01-15",1,1,5,"boobs");
+			  logic.getAppointmets(1);
+	} catch (SQLException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
 
 
-	    }
-	    else
-	    this.sendToAllClients(msg);
-	  }
+  }
 
 
   /**

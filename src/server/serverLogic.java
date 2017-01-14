@@ -6,6 +6,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import ocsf.server.*;
 
@@ -23,32 +25,129 @@ public class serverLogic
 		 }
 		 return instance;
 	 }
-
-	public void temp(ConnectionToClient client){
-    	ResultSet rs;
+/*
+ * initializes appointments templates in two tables.
+ * one table is for specialists appointments.
+ * the second is for family doctors appointments.
+ * */
+	public void initializeAppointments()
+	{
 		PreparedStatement stmt;
 		try
 		{
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-        } catch (Exception ex) {/* handle the error*/}
-
-        try
-        {
-            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/softeng","root","1234");
-            //Connection conn = DriverManager.getConnection("jdbc:mysql://192.168.3.68/test","root","Root");
-            System.out.println("SQL connection succeed");
-            stmt = conn.prepareStatement(database.SELECT_DOCTORS_APPOINTMENTS);
-            rs = stmt.executeQuery();
-            while (rs.next()){
-            	try {
-					client.sendToClient("flight number 387 is now priced at: "+rs.getString(1));
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+          Class.forName("com.mysql.jdbc.Driver").newInstance();
+		} catch (Exception ex) {/* handle the error*/}
+		try
+		{
+			Calendar calobj ;
+	      	Calendar calobjPlus90 = Calendar.getInstance();
+	      	Calendar calobjPlus28 = Calendar.getInstance();
+	      	calobjPlus90.add(Calendar.DATE, 91);
+	      	calobjPlus28.add(Calendar.DATE, 29);
+	      	SimpleDateFormat  df = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+			Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/softeng","root","1234");
+			//Connection conn = DriverManager.getConnection("jdbc:mysql://192.168.3.68/test","root","Root");
+			System.out.println("SQL connection succeed");
+			calobj = Calendar.getInstance();
+			while(calobj.before(calobjPlus28))
+			{
+				if (calobj.get(Calendar.DAY_OF_WEEK)<Calendar.FRIDAY && calobj.get(Calendar.DAY_OF_WEEK)>=Calendar.SUNDAY)
+				{
+					calobj.set(Calendar.HOUR_OF_DAY, 8);
+					calobj.set(Calendar.MINUTE, 0);
+					while(calobj.get(Calendar.HOUR_OF_DAY)<16)
+					{
+						stmt=conn.prepareStatement("insert into familyfreeappointments values (?,default,default,default,default,default,default)");
+						stmt.setString(1, df.format(calobj.getTime()));
+						stmt.execute();
+						calobj.add(Calendar.MINUTE, 15);
+					}
 				}
-            }
-    }
-        catch (SQLException e) {e.printStackTrace();}
+				calobj.add(Calendar.DATE, 1);
+			}
+			calobj = Calendar.getInstance();
+			while(calobj.before(calobjPlus90))
+			{
+				if (calobj.get(Calendar.DAY_OF_WEEK)<Calendar.FRIDAY && calobj.get(Calendar.DAY_OF_WEEK)>=Calendar.SUNDAY)
+				{
+					calobj.set(Calendar.HOUR_OF_DAY, 8);
+					calobj.set(Calendar.MINUTE, 0);
+					while(calobj.get(Calendar.HOUR_OF_DAY)<16)
+					{
+						stmt=conn.prepareStatement("insert into specialistfreeappointments values (?,default,default,default,default,default,default)");
+						stmt.setString(1, df.format(calobj.getTime()));
+						stmt.execute();
+						calobj.add(Calendar.MINUTE, 20);
+					}
+				}
+				calobj.add(Calendar.DATE, 1);
+			}
+	      }
+	      catch (SQLException e) {e.printStackTrace();}
+}
+	public boolean makeAppointments(String apptime, String orderTime, int insuredId, int location , int doctorId, String residency) throws SQLException
+	{
+		try
+		{
+          Class.forName("com.mysql.jdbc.Driver").newInstance();
+		} catch (Exception ex) {/* handle the error*/}
+		Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/softeng","root","1234");
+		PreparedStatement stmt=conn.prepareStatement(database.MAKEAPPOINTMENT);
+		stmt.setString(1, apptime);
+		stmt.setString(2, orderTime);
+		stmt.setInt(3, insuredId);
+		stmt.setInt(4, location);
+		stmt.setInt(5, doctorId);
+		stmt.setString(6, residency);
+		if(stmt.execute())
+			return true;
+		return false;
 	}
-
+	public void getDoctors(String residency,int insuredId) throws SQLException
+	{
+		try
+		{
+          Class.forName("com.mysql.jdbc.Driver").newInstance();
+		} catch (Exception ex) {/* handle the error*/}
+		Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/softeng","root","1234");
+		PreparedStatement stmt=conn.prepareStatement(database.SELECT_DOCTORS_BY_DATE);
+		stmt.setInt(1,insuredId);
+		stmt.setString(2, residency);
+		stmt.setString(3, residency);
+		ResultSet rs= stmt.executeQuery();
+		while(rs.next()){
+			System.out.println(rs.getString(1)+ " " + rs.getString(2)+ " " + rs.getString(3) + " " + rs.getString(4) + " " + rs.getString(5));
+		}
+	}
+	public boolean deleteAppointment(String appTime, int doctorId, int insuredId) throws SQLException
+	{
+		try
+		{
+          Class.forName("com.mysql.jdbc.Driver").newInstance();
+		} catch (Exception ex) {/* handle the error*/}
+		Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/softeng","root","1234");
+		PreparedStatement stmt=conn.prepareStatement(database.DELETE_APPOINTMENT);
+		stmt.setString(1, appTime);
+		stmt.setInt(2, doctorId);
+		stmt.setInt(3, insuredId);
+		if(stmt.execute())
+			return true;
+		return false;
+	}
+	public void getAppointmets(int doctorId) throws SQLException
+	{
+		try
+		{
+          Class.forName("com.mysql.jdbc.Driver").newInstance();
+		} catch (Exception ex) {/* handle the error*/}
+		Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/softeng","root","1234");
+		PreparedStatement stmt=conn.prepareStatement(database.SHOW_TODAYS_APPOINTMENTS_BY_DOCTOR);
+		stmt.setInt(1,doctorId);
+		ResultSet rs=stmt.executeQuery();
+		while(rs.next()){
+			System.out.println(rs.getString(1)+" "+ rs.getString(2)+ " "+ rs.getString(3)+" "+ rs.getString(4));
+		}
+	}
+	public void getavailableAppointments(){/*get all the appointments available depending on the doctor*/}
+	public void updatefreeAppointments(){/*add another day in three months*/}
 }
