@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<"src/Furniture.java"AnchorPane prefHeight="419.0" prefWidth="385.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
+   <children>
+      <AnchorPane layoutX="-64.0" layoutY="-180.0" prefHeight="200.0" prefWidth="200.0" />
+      <Button id="UserLogin" layoutX="156.0" layoutY="259.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="70.0" text="LogIn" />
+      <TextField id="UserID" layoutX="108.0" layoutY="136.0" />
+      <TextField id="UserPassword" layoutX="108.0" layoutY="185.0" />
+      <Label layoutX="50.0" layoutY="140.0" text="ID" />
+      <Label layoutX="50.0" layoutY="189.0" text="password" />
+      <ImageView fitHeight="57.0" fitWidth="200.0" layoutX="76.0" layoutY="34.0">
+         <image>
+            <Image url="@../../../../Desktop/welcome.png" />
+         </image>
+      </ImageView>
+   </children>
+</AnchorPane>
