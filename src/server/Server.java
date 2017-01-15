@@ -3,7 +3,10 @@ package server;
 // "Object Oriented Software Engineering" and is issued under the open-source
 // license found at www.lloseng.com
 
-import java.io.*;
+import java.sql.SQLException;
+import java.util.Collection;
+import utils.models.*;
+/*import java.io.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -16,7 +19,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.util.Calendar;*/
 import ocsf.server.*;
 
 /**
@@ -70,14 +73,17 @@ public class Server extends AbstractServer
   public void handleMessageFromClient
     (/*enum Requests,*/Object msg, ConnectionToClient client)
   {
-	  try {
-		  if( msg.equals("send"))
-		//logic.makeAppointments("2017-01-25 08:00","2017-01-15",1,1,5,"boobs");
-			  logic.getAppointmets(1);
-	} catch (SQLException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
+	  if( msg.equals("send"))
+		try {
+			/*Collection<Appointment> app = logic.getavailableAppointments(new familyDoctor(1));
+			for(Appointment temp:app) {
+				System.out.println(temp.appTime);
+			}*/
+			logic.makeAppointments(new Appointment("2017-01-16 08:00",3,new familyDoctor(5,"boobs",1)));
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 
   }
