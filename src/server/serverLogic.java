@@ -50,7 +50,6 @@ public class serverLogic
 	      	calobjPlus28.add(Calendar.DATE, 29);
 	      	SimpleDateFormat  df = new SimpleDateFormat("yyyy/MM/dd HH:mm");
 			Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/softeng","root","1234");
-			//Connection conn = DriverManager.getConnection("jdbc:mysql://192.168.3.68/test","root","Root");
 			System.out.println("SQL connection succeed");
 			calobj = Calendar.getInstance();
 			while(calobj.before(calobjPlus28))
@@ -138,12 +137,12 @@ public class serverLogic
 		stmt.setString(1, appTime);
 		stmt.setInt(2, doctorId);
 		stmt.setInt(3, insuredId);
-		if(stmt.execute())
-			return true;
-		return false;
+		stmt.execute();
+		return true;
 	}
-	public void getAppointmets(int doctorId) throws SQLException
+	public Collection<Appointment> getAppointmets(int doctorId) throws SQLException
 	{
+		Collection<Appointment> doctorsAppointments= new ArrayList<Appointment>();
 		try
 		{
           Class.forName("com.mysql.jdbc.Driver").newInstance();
@@ -152,9 +151,12 @@ public class serverLogic
 		PreparedStatement stmt=conn.prepareStatement(database.SHOW_TODAYS_APPOINTMENTS_BY_DOCTOR);
 		stmt.setInt(1,doctorId);
 		ResultSet rs=stmt.executeQuery();
-		while(rs.next()){
-			System.out.println(rs.getString(1)+" "+ rs.getString(2)+ " "+ rs.getString(3)+" "+ rs.getString(4));
+		while(rs.next())
+		{
+			doctorsAppointments.add(new Appointment(rs.getString(1),rs.getInt(4),rs.getString(2),rs.getString(3)));
+			//System.out.println(rs.getString(1)+" "+ rs.getString(2)+ " "+ rs.getString(3)+" "+ rs.getString(4));
 		}
+		return doctorsAppointments;
 	}
 	public Collection<Appointment> getavailableAppointments(doctor doctorId) throws SQLException
 	{

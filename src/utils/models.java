@@ -12,7 +12,8 @@ public interface models {
 		public String orderTime;
 		public int insuredID;
 		public final doctor doctor;
-
+		public String patientFirstName;
+		public String patientLastName;
 
 		public Appointment(String apptime , int ID, doctor doc)
 		{
@@ -21,6 +22,14 @@ public interface models {
 			this.orderTime = df.format(Calendar.getInstance().getTime());
 			this.insuredID = ID;
 			this.doctor = doc;
+		}
+
+		public Appointment(String apptime,int ID, String first, String Last){
+			this.doctor=null;
+			this.appTime=apptime;
+			this.insuredID=ID;
+			this.patientFirstName=first;
+			this.patientLastName=Last;
 		}
 		public Appointment(doctor doc, String appTime)
 		{
@@ -97,7 +106,8 @@ public interface models {
 	class specialistDoctor extends doctor
 	{
 
-		public specialistDoctor(int i) {
+		public specialistDoctor(int i)
+		{
 			super(i);
 			// TODO Auto-generated constructor stub
 		}

@@ -6,8 +6,6 @@ public interface database
 
 	public final String SELECT_RESIDENCY = "SELECT DISTINCT EMPLOYEES.RESIDENCY FROM EMPLOYEES ";
 
-	public final String SELECT_DOCTORS_APPOINTMENTS = "SELECT * FROM freeappointments WHERE DOCTORID = ? ";
-
 	public final String SELECT_DOCTORS_BY_DATE = " SELECT E.EMPLOYEEID, E.FIRSTNAME, E.LASTNAME, E.BRANCH, E.Residency "
 				+ "FROM EMPLOYEES E LEFT JOIN "
 				+ "(SELECT PA.DOCTORID, MAX(APPTIME) AS LAST_APPTIME "
@@ -55,8 +53,8 @@ public interface database
 	public final String LOGIN_EMPLOYEE = "SELECT * FROM employees where employees.employeeID = ? and employees.password = ? ";
 
 	public final String GET_APPOINTMENTS_BY_PATIENT = "SELECT sa.appTime,sa.orderTime,sa.insuredID,sa.location,sa.doctorID,sa.residency,sa.location "
-					+"e.firstName , e.lastName "
-					+" FROM scheduledappointments sa left join ( "
-					+"select e.firstName, e.lastName,e.employeeID from employees e) e on sa.doctorID=e.employeeID "
-					+ "where sa.insuredID=? ";
+				+"e.firstName , e.lastName "
+				+" FROM scheduledappointments sa left join ( "
+				+"select e.firstName, e.lastName,e.employeeID from employees e) e on sa.doctorID=e.employeeID "
+				+ "where sa.insuredID=? ";
 }
