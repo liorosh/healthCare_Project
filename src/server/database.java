@@ -57,4 +57,8 @@ public interface database
 				+" FROM scheduledappointments sa left join ( "
 				+"select e.firstName, e.lastName,e.employeeID from employees e) e on sa.doctorID=e.employeeID "
 				+ "where sa.insuredID=? ";
+
+	public final String MOVE_APPOINTMENTS_TO_PAST = "insert into pastappointments select * from scheduledappointments "
+				+" where scheduledappointments.appTime < now(); "
+				+" delete from scheduledappointments where scheduledappointments.appTime < now(); " ;
 }

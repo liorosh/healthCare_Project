@@ -73,19 +73,20 @@ public class Server extends AbstractServer
   public void handleMessageFromClient
     (/*enum Requests,*/Object msg, ConnectionToClient client)
   {
-	  if( msg.equals("send"))
+	 Message message=(Message) msg;
+	 /* if(msg.equals("send"))
+		System.out.print("i hear you!");*/
+		/*Collection<Appointment> app = logic.getavailableAppointments(new familyDoctor(1));
+		for(Appointment temp:app) {
+			System.out.println(temp.appTime);
+		}*/
+
 		try {
-			/*Collection<Appointment> app = logic.getavailableAppointments(new familyDoctor(1));
-			for(Appointment temp:app) {
-				System.out.println(temp.appTime);
-			}*/
-			logic.makeAppointments(new Appointment("2017-01-16 08:00",3,new familyDoctor(5,"boobs",1)));
+			logic.makeAppointments((Appointment)message.objects);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-
   }
 
 

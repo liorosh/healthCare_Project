@@ -1,12 +1,23 @@
 package utils;
 
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collection;
 
 public interface models {
 
-	public class Appointment
+	public class Message implements Serializable {
+		public String message;
+		public Object objects;
+
+		public Message(String message, Object data){
+			this.message=message;
+			this.objects=data;
+		}
+	}
+	public class Appointment implements Serializable
 	{
 		public String appTime;
 		public String orderTime;
@@ -63,7 +74,7 @@ public interface models {
 
 	}
 
-	class employee
+	class employee implements Serializable
 	{
 		public int id;
 	}
@@ -84,8 +95,10 @@ public interface models {
 			this.fName=first;
 			this.lName=last;
 		}
-		public doctor(int i, String string, int j) {
-			// TODO Auto-generated constructor stub
+		public doctor(int id, String res, int branch) {
+			this.id=id;
+			this.residency=res;
+			this.location=branch;
 		}
 	}
 
@@ -111,10 +124,9 @@ public interface models {
 			super(i);
 			// TODO Auto-generated constructor stub
 		}
+		public specialistDoctor(int i, String string, int j) {
+			super(i,string,j);
+		}
 
 	}
-
-
-
-
 }

@@ -2,9 +2,10 @@ package clientInsured;
 
 import java.util.ArrayList;
 
-import utils.*;
-import utils.models.Appointment;
-import utils.models.doctor;
+import client.ClientConsole;
+import client.client.ChatClient;
+import utils.models.*;
+
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -16,8 +17,9 @@ import javafx.scene.input.MouseEvent;
 
 public class SetAppointmentsSystemGUI {
 
+	ClientConsole client;
 	SetAppointmentsSystem logic;
-	
+
     @FXML
     private Button cFamily;
 
@@ -35,13 +37,13 @@ public class SetAppointmentsSystemGUI {
 
     @FXML
     private Button MakeApp;
-    
+
     @FXML
     private ListView<String> presentAppList;
 
     @FXML
     public void initialize() {
-    	
+
     }
     private void showAppointments(int doctorID){
     	presentAppList.setVisible(true);
@@ -51,7 +53,7 @@ public class SetAppointmentsSystemGUI {
     		items.add(app.getAppTime());
     	}
     }
-    
+
     private void showDoctorsList(String residency){
     	SpecialDoctorsList.setVisible(true);
     	ObservableList<String> items = SpecialDoctorsList.getItems();
@@ -60,26 +62,30 @@ public class SetAppointmentsSystemGUI {
     		items.add(doc.toString());
     	}
     }
-    
-    
+
+
     @FXML
     void makeApp(MouseEvent event) {
+    	client= new ClientConsole("localhost",5555);
+
+    	client.client.handleMessageFromClientUI(new Message("123",new Appointment("2017-01-20 08:00",3,new familyDoctor(1,"boobs",1))));
+    	client.client.handleMessageFromClientUI("send");
     	MakeApp.setVisible(false);
     	DoctorLable.setVisible(true);
     	cFamily.setVisible(true);
     	cSpecialist.setVisible(true);
-    	
-    	
+
+
     }
-    
+
     @FXML
     void cFamilyDoc(ActionEvent event) {
     	cFamily.setVisible(false);
     	cSpecialist.setVisible(false);
       	DoctorLable.setVisible(false);
       	showAppointments(2);
-  
-    	
+
+
     }
 
     @FXML
@@ -87,11 +93,11 @@ public class SetAppointmentsSystemGUI {
     	cFamily.setVisible(false);
     	cSpecialist.setVisible(false);
     	DoctorLable.setVisible(false);
-    	
-    }
-    
-   
 
-   
+    }
+
+
+
+
 
 }

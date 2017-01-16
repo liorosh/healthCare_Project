@@ -18,9 +18,7 @@ import utils.models.*;
 public class serverLogic
 {
 	private static serverLogic instance=null;
-	 serverLogic()
-	 {
-	 }
+	 serverLogic(){}
 	 public static serverLogic getInstance()
 	 {
 		 if (null==instance)
@@ -104,7 +102,6 @@ public class serverLogic
 		stmt.setString(6, appointment.getDoctor().residency);
 		stmt.execute();
 		return true;
-
 	}
 	public Collection<doctor> getDoctors(String residency,int insuredId) throws SQLException
 	{
@@ -120,13 +117,14 @@ public class serverLogic
 		stmt.setString(3, residency);
 		ResultSet rs= stmt.executeQuery();
 
-		while(rs.next()){
+		while(rs.next())
+		{
 			doctors.add(new doctor(rs.getInt(1), residency, rs.getInt(4), rs.getString(2), rs.getString(3)));
 			//System.out.println(rs.getString(1)+ " " + rs.getString(2)+ " " + rs.getString(3) + " " + rs.getString(4) + " " + rs.getString(5));
 		}
 		return doctors;
 	}
-	public boolean deleteAppointment(String appTime, int doctorId, int insuredId) throws SQLException
+	public boolean deleteAppointment(Appointment appointment, int insuredId) throws SQLException
 	{
 		try
 		{
@@ -134,13 +132,13 @@ public class serverLogic
 		} catch (Exception ex) {/* handle the error*/}
 		Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/softeng","root","1234");
 		PreparedStatement stmt=conn.prepareStatement(database.DELETE_APPOINTMENT);
-		stmt.setString(1, appTime);
-		stmt.setInt(2, doctorId);
+		stmt.setString(1, appointment.appTime);
+		stmt.setInt(2, appointment.doctor.id);
 		stmt.setInt(3, insuredId);
 		stmt.execute();
 		return true;
 	}
-	public Collection<Appointment> getAppointmets(int doctorId) throws SQLException
+	public Collection<Appointment> getDoctorsAppointmets(int doctorId) throws SQLException
 	{
 		Collection<Appointment> doctorsAppointments= new ArrayList<Appointment>();
 		try
@@ -183,7 +181,6 @@ public class serverLogic
 	}
 	public void updatefreeAppointments() throws SQLException
 	{/*add another day in three months*/
-
 		try
 		{
           Class.forName("com.mysql.jdbc.Driver").newInstance();
@@ -191,8 +188,11 @@ public class serverLogic
 		Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/softeng","root","1234");
 		fillEveryDay(91,20,conn);
 		fillEveryDay(29,15,conn);
+		PreparedStatement stmt= conn.prepareStatement(database.MOVE_APPOINTMENTS_TO_PAST);
+		stmt.execute();
 	}
-	public void fillEveryDay(int dayToInsert, int appInterval, Connection conn) throws SQLException{
+	public void fillEveryDay(int dayToInsert, int appInterval, Connection conn) throws SQLException
+	{
 		PreparedStatement stmt = null;
 		SimpleDateFormat  df = new SimpleDateFormat("yyyy/MM/dd HH:mm");
 		Calendar dayToAdd = Calendar.getInstance();
@@ -231,7 +231,10 @@ public class serverLogic
 			stmt= conn.prepareStatement(database.LOGIN_PATIENT);
 		stmt.setInt(1, loginId);
 		stmt.setString(2, password);
-		return stmt.execute();
+		ResultSet rs = stmt.executeQuery();
+		if(rs.next())
+			return true;
+		return false;
 	}
 	public Collection<Appointment> getPatientsApoointments(int insuredId) throws SQLException
 	{

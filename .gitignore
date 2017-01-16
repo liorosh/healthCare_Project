@@ -48,3 +48,6 @@ Temporary Items
 *.css
 bin/clientInsured/Main.class
 bin/clientInsured/MakeAppoint.fxml
+*.class
+bin/clientInsured/User.fxml
+.classpath
