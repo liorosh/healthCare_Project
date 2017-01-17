@@ -1,11 +1,13 @@
 package clientInsured;
 
+
+import java.io.IOException;
 import java.util.ArrayList;
-
-import client.ClientConsole;
+import java.util.Collection;
 import client.client.ChatClient;
+import client.common.ChatIF;
 import utils.models.*;
-
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -13,12 +15,23 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 
-public class SetAppointmentsSystemGUI {
+public class SetAppointmentsSystemGUI implements ChatIF{
 
-	ClientConsole client;
+public SetAppointmentsSystemGUI() throws IOException{
+
+
+}
+	ChatClient client;
 	SetAppointmentsSystem logic;
+
+
+   /* @FXML
+    private TextField text;*/
 
     @FXML
     private Button cFamily;
@@ -42,14 +55,25 @@ public class SetAppointmentsSystemGUI {
     private ListView<String> presentAppList;
 
     @FXML
-    public void initialize() {
+    private ListView<String> table;
 
+    @FXML
+    private TabPane tabs;
+
+    @FXML
+    private Tab delete;
+
+
+    @FXML
+    public void initialize() {
     }
+
     private void showAppointments(int doctorID){
     	presentAppList.setVisible(true);
     	ObservableList<String> items = presentAppList.getItems();
     	ArrayList<Appointment> list= logic.getAvailableAppointments(doctorID);
-    	for (Appointment app : list ){
+    	for (Appointment app : list )
+    	{
     		items.add(app.getAppTime());
     	}
     }
@@ -65,15 +89,18 @@ public class SetAppointmentsSystemGUI {
 
 
     @FXML
-    void makeApp(MouseEvent event) {
-    	client= new ClientConsole("localhost",5555);
+    void makeApp(ActionEvent event) {
 
-    	client.client.handleMessageFromClientUI(new Message("123",new Appointment("2017-01-20 08:00",3,new familyDoctor(1,"boobs",1))));
-    	client.client.handleMessageFromClientUI("send");
-    	MakeApp.setVisible(false);
-    	DoctorLable.setVisible(true);
+
+    	//client.client.handleMessageFromClientUI(new clientMessage("123",new Appointment("2017-01-20 08:00",3,new familyDoctor(1,"boobs",1))));
+
+		client.handleMessageFromClientUI(new clientMessage("A",null));
+		//serverMessage temp=(serverMessage)client.message;
+		//System.out.print(temp.message+" from the gui");
+    	//MakeApp.setVisible(false);
+    	/*DoctorLable.setVisible(true);
     	cFamily.setVisible(true);
-    	cSpecialist.setVisible(true);
+    	cSpecialist.setVisible(true);*/
 
 
     }
@@ -96,8 +123,17 @@ public class SetAppointmentsSystemGUI {
 
     }
 
-
-
-
-
+	@Override
+	public Collection<Object> display(Object message) {
+		serverMessage temp= (serverMessage) message;
+		//text.setText(temp.message);
+		ObservableList<String> hour= FXCollections.observableArrayList();
+		for(Appointment t:temp.data){
+			hour.add(t.appTime);
+		}
+		table.setItems(hour);
+		return null;
+	}
 }
+
+

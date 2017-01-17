@@ -6,17 +6,42 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
 
+import utils.models.Appointment;
+
 public interface models {
 
 	public class Message implements Serializable {
 		public String message;
-		public Object objects;
 
-		public Message(String message, Object data){
+		public Message(String message){
 			this.message=message;
-			this.objects=data;
 		}
 	}
+
+	public class serverMessage extends Message
+	{
+		public Collection<Appointment> data;
+
+		public serverMessage(String message, Collection<Appointment> result) {
+			super(message);
+			this.data= result;
+		}
+
+	}
+
+	public class clientMessage extends Message{
+		public Object data;
+		public clientMessage(String message, Object data) {
+			super(message);
+			this.data=data;
+		}
+
+	}
+
+
+
+
+
 	public class Appointment implements Serializable
 	{
 		public String appTime;

@@ -53,9 +53,9 @@ public interface database
 	public final String LOGIN_EMPLOYEE = "SELECT * FROM employees where employees.employeeID = ? and employees.password = ? ";
 
 	public final String GET_APPOINTMENTS_BY_PATIENT = "SELECT sa.appTime,sa.orderTime,sa.insuredID,sa.location,sa.doctorID,sa.residency,sa.location "
-				+"e.firstName , e.lastName "
+				+" ,e.firstName , e.lastName "
 				+" FROM scheduledappointments sa left join ( "
-				+"select e.firstName, e.lastName,e.employeeID from employees e) e on sa.doctorID=e.employeeID "
+				+" select e.firstName, e.lastName,e.employeeID from employees e) e on sa.doctorID=e.employeeID "
 				+ "where sa.insuredID=? ";
 
 	public final String MOVE_APPOINTMENTS_TO_PAST = "insert into pastappointments select * from scheduledappointments "

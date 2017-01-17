@@ -5,7 +5,10 @@
 package client.client;
 
 import ocsf.client.*;
+import utils.models.serverMessage;
 import client.common.*;
+
+
 import java.io.*;
 
 /**
@@ -26,8 +29,10 @@ public class ChatClient extends AbstractClient
    * the display method in the client.
    */
   ChatIF clientUI;
-
-
+  public void setClient(ChatIF client)
+  {
+	  this.clientUI=client;
+  }
   //Constructors ****************************************************
 
   /**
@@ -56,7 +61,9 @@ public class ChatClient extends AbstractClient
    */
   public void handleMessageFromServer(Object msg)
   {
-    clientUI.display(msg.toString());
+	  serverMessage message =(serverMessage) msg;
+	  message=(serverMessage) msg;
+	  clientUI.display(message);
   }
 
   /**

@@ -3,6 +3,7 @@ package server;
 // "Object Oriented Software Engineering" and is issued under the open-source
 // license found at www.lloseng.com
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Collection;
 import utils.models.*;
@@ -73,20 +74,25 @@ public class Server extends AbstractServer
   public void handleMessageFromClient
     (/*enum Requests,*/Object msg, ConnectionToClient client)
   {
-	 Message message=(Message) msg;
-	 /* if(msg.equals("send"))
-		System.out.print("i hear you!");*/
-		/*Collection<Appointment> app = logic.getavailableAppointments(new familyDoctor(1));
-		for(Appointment temp:app) {
-			System.out.println(temp.appTime);
-		}*/
+	 clientMessage message=(clientMessage) msg;
+	 serverMessage results = null;
+	 if(message.message.equals("A"))	{
 
-		try {
-			logic.makeAppointments((Appointment)message.objects);
-		} catch (SQLException e) {
+		 try {
+			 Collection<Appointment> result=logic.getPatientsApoointments(1);
+			  results= new serverMessage("results",result);
+			  try {
+				client.sendToClient(results);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e1.printStackTrace();
 		}
+
+	 }
   }
 
 

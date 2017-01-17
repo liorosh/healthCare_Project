@@ -1,12 +1,12 @@
 package clientInsured;
 import java.util.ArrayList;
 
-import utils.*;
+import utils.models.*;
 
-public class SetAppointmentsSystem implements models {
+public class SetAppointmentsSystem   {
 
 	/**
-	 * 
+	 *
 	 * @param name
 	 */
 	public ArrayList<Appointment> getAvailableAppointments(int id) {
@@ -15,7 +15,7 @@ public class SetAppointmentsSystem implements models {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param type
 	 */
 	public void chooseTypeOfDoctor(String type) {
@@ -24,7 +24,7 @@ public class SetAppointmentsSystem implements models {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param specialty
 	 */
 	public void chooseSpecialist(String specialty) {
@@ -33,7 +33,7 @@ public class SetAppointmentsSystem implements models {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param name
 	 */
 	public void chooseDoctor(String name) {
@@ -42,7 +42,7 @@ public class SetAppointmentsSystem implements models {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param doctorsType
 	 */
 	public ArrayList<doctor> getDoctorsList(String doctorsType) {
@@ -56,7 +56,7 @@ public class SetAppointmentsSystem implements models {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param app
 	 */
 	public void setAppointmenst(Appointment app) {
