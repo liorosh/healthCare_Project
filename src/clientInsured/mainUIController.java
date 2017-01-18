@@ -10,6 +10,7 @@ import java.util.TimerTask;
 import client.client.ChatClient;
 import client.common.ChatIF;
 import javafx.application.Platform;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -27,6 +28,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.util.Pair;
 import utils.models.clientMessage;
@@ -38,6 +40,8 @@ public class mainUIController implements ChatIF{
 
 		client= new ChatClient("localhost",5555,this);
 	}
+	ChatClient client;
+	SetAppointmentsSystem logic;
 	@FXML
 	Parent appointments;
 	@FXML
@@ -48,10 +52,42 @@ public class mainUIController implements ChatIF{
 
 	@FXML
 	SetAppointmentsSystemGUI makeTabController;
+	   @FXML
+	    private TextField password;
 
-	ChatClient client;
-	SetAppointmentsSystem logic;
+	    @FXML
+	    private Label idLabel;
 
+	    @FXML
+	    private Label passlabel;
+
+	    @FXML
+	    private TextField insuredID;
+
+	    @FXML
+	     private Button log;
+
+	    @FXML
+	    void Login(ActionEvent event) {
+	    	this.client.handleMessageFromClientUI(new clientMessage(clientMessages.Login,insuredID.getText(),password.getText()));
+
+	    }
+
+
+
+
+
+	    @FXML
+	    public void insertlisten(ActionEvent event)
+	    {
+
+	    	if(null!=this.insuredID && null!=this.password)
+	    		this.log.setDisable(false);
+	    	else
+	    		this.log.setDisable(true);
+	    }
+    @FXML
+    Tab login;
 	@FXML
 	Tab set;
 	@FXML
@@ -71,20 +107,26 @@ public class mainUIController implements ChatIF{
 		serverMessage temp= (serverMessage) message;
 		if(temp.data==null){
 			System.out.print("not logged in");
-		this.getLogin();
 		}
 		else{
 			System.out.print("logged in");
+			Platform.runLater(new Runnable(){
+				public void run(){
+					tabs.getSelectionModel().select(1);
+					tabs.getTabs().remove(0);
+
+				}
+			});
 			makeTabController.client=client;
 			client.setClient(makeTabController);
 			this.set.setDisable(false);
 			this.myapp.setDisable(false);
 			makeTabController.client.handleMessageFromClientUI(new clientMessage(clientMessages.getResidency,null,null));
-			tabs.getSelectionModel().selectedItemProperty().addListener(
+			getTabs().getSelectionModel().selectedItemProperty().addListener(
 				    new ChangeListener<Tab>() {
 				        @Override
 				        public void changed(ObservableValue<? extends Tab> ov, Tab set, Tab myapp) {
-				        	if(tabs.getSelectionModel().getSelectedItem().getId().equals("myapp")){
+				        	if(getTabs().getSelectionModel().getSelectedItem().getId().equals("myapp")){
 				        		deleteTabController.client=client;
 				        		client.setClient(deleteTabController);
 				        		makeTabController.getDatePicker().setValue(null);
@@ -93,7 +135,7 @@ public class mainUIController implements ChatIF{
 				        		makeTabController.getResList().getSelectionModel().clearSelection();
 				        		System.out.print("1");
 				        	}
-				        	else if(tabs.getSelectionModel().getSelectedItem().getId().equals("set")){
+				        	else if(getTabs().getSelectionModel().getSelectedItem().getId().equals("set")){
 				        	makeTabController.client=client;
 				        		client.setClient(makeTabController);
 				        		System.out.print("2");
@@ -108,95 +150,31 @@ public class mainUIController implements ChatIF{
 	}
 
 	@FXML
+	AnchorPane anchor;
+
+	@FXML
     private TextField text;
 
 	@FXML
 	private TabPane tabs;
 
-
-	private void getLogin()
-	{
-		// Create the custom dialog.
-		Dialog<Pair<String, String>> dialog = new Dialog<>();
-		dialog.setTitle("Login Dialog");
-		dialog.setHeaderText("Look, a Custom Login Dialog");
-
-		// Set the icon (must be included in the project).
-		//dialog.setGraphic(new ImageView(this.getClass().getResource("login.png").toString()));
-
-		// Set the button types.
-		ButtonType loginButtonType = new ButtonType("Login", ButtonData.OK_DONE);
-		dialog.getDialogPane().getButtonTypes().addAll(loginButtonType, ButtonType.CANCEL);
-
-		// Create the username and password labels and fields.
-		GridPane grid = new GridPane();
-		grid.setHgap(10);
-		grid.setVgap(10);
-		grid.setPadding(new Insets(20, 150, 10, 10));
-
-		TextField username = new TextField();
-		username.setPromptText("Username");
-		PasswordField password = new PasswordField();
-		password.setPromptText("Password");
-
-		grid.add(new Label("Username:"), 0, 0);
-		grid.add(username, 1, 0);
-		grid.add(new Label("Password:"), 0, 1);
-		grid.add(password, 1, 1);
-
-		// Enable/Disable login button depending on whether a username was entered.
-		Node loginButton = dialog.getDialogPane().lookupButton(loginButtonType);
-		loginButton.setDisable(true);
-
-		// Do some validation (using the Java 8 lambda syntax).
-		username.textProperty().addListener((observable, oldValue, newValue) -> {
-		    loginButton.setDisable(newValue.trim().isEmpty());
-		});
-
-		dialog.getDialogPane().setContent(grid);
-
-		// Request focus on the username field by default.
-		Platform.runLater(() -> username.requestFocus());
-
-		// Convert the result to a username-password-pair when the login button is clicked.
-		dialog.setResultConverter(dialogButton -> {
-		    if (dialogButton == loginButtonType) {
-		    	this.client.handleMessageFromClientUI(new clientMessage(clientMessages.Login,username.getText(),password.getText()));
-		        //return new Pair<>(username.getText(), password.getText());
-		    }
-		    return null;
-		});
-
-		Optional<Pair<String, String>> result = dialog.showAndWait();
-
-		result.ifPresent(usernamePassword -> {
-		    System.out.println("Username=" + usernamePassword.getKey() + ", Password=" + usernamePassword.getValue());
-		});
-		/*Dialog<String> dialog= new Dialog<>();
-		Label label1 = new Label("Name: ");
-		Label label2 = new Label("Phone: ");
-		TextField text1 = new TextField();
-		TextField text2 = new TextField();
-		GridPane grid = new GridPane();
-		Button buttonTypeOk = new Button("Okay");
-		buttonTypeOk.setDisable(true);
-		grid.add(label1, 1, 1);
-		grid.add(text1, 2, 1);
-		grid.add(label2, 1, 2);
-		grid.add(text2, 2, 2);
-		grid.add(buttonTypeOk,3,3);
-		dialog.getDialogPane().setContent(grid);
-		buttonTypeOk.setOnAction(ActionEvent event){
-
-		}
-
-		dialog.showAndWait();*/
-
-	}
 	@FXML
 	public void initialize() throws IOException
 	{
-		getLogin();
+	    BooleanBinding bb = new BooleanBinding() {
+	        {
+	            super.bind(insuredID.textProperty(),
+	            		password.textProperty());
+	        }
+
+	        @Override
+	        protected boolean computeValue() {
+	            return (insuredID.getText().isEmpty()
+	                    || password.getText().isEmpty());
+	        }
+	    };
+    	this.log.disableProperty().bind(bb);
+		//getLogin();
 		//makeTabController.client=client;
 		//client.setClient(makeTabController);
 		/*makeTabController.client.handleMessageFromClientUI(new clientMessage(clientMessages.getResidency,null,null));
@@ -221,5 +199,11 @@ public class mainUIController implements ChatIF{
 			        }
 			    }
 			);*/
+	}
+	public TabPane getTabs() {
+		return tabs;
+	}
+	public void setTabs(TabPane tabs) {
+		this.tabs = tabs;
 	}
 }
