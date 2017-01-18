@@ -1,24 +1,44 @@
 package clientInsured;
 
 
+import java.awt.EventQueue;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.chrono.ChronoLocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
 import client.client.ChatClient;
 import client.common.ChatIF;
 import utils.models.*;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.DateCell;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.MouseEvent;
+import javafx.util.Callback;
+import javafx.util.StringConverter;
 
 public class SetAppointmentsSystemGUI implements ChatIF{
 
@@ -29,111 +49,230 @@ public SetAppointmentsSystemGUI() throws IOException{
 	ChatClient client;
 	SetAppointmentsSystem logic;
 
-
-   /* @FXML
-    private TextField text;*/
+    @FXML
+    public DatePicker datePicker;
 
     @FXML
-    private Button cFamily;
+    private ListView<doctor> docList;
 
     @FXML
-    private ComboBox<?> ListOfSpecialists;
+    private ListView<String> resList;
+
+    public ListView<String> getResList() {
+		return resList;
+	}
+	@FXML
+    private Label reslbl;
+
+    public DatePicker getDatePicker() {
+		return datePicker;
+	}
+
+	public ListView<doctor> getDocList() {
+		return docList;
+	}
+
+	public ListView<Appointment> getHourList() {
+		return hourList;
+	}
+
+	private Collection<Appointment>appointments;
 
     @FXML
-    private Button cSpecialist;
-
-    @FXML
-    private ListView<String> SpecialDoctorsList;
-
-    @FXML
-    private Label DoctorLable;
-
-    @FXML
-    private Button MakeApp;
-
-    @FXML
-    private ListView<String> presentAppList;
-
-    @FXML
-    private ListView<String> table;
-
-    @FXML
-    private TabPane tabs;
-
-    @FXML
-    private Tab delete;
+    private ListView<Appointment> hourList;
 
 
     @FXML
-    public void initialize() {
+    private Button setApp;
+
+    @FXML
+    void reslistener(MouseEvent event) {
+    			String selectedResidency=resList.getSelectionModel().getSelectedItem();
+    			if(null==selectedResidency)
+    				return;
+    			client.handleMessageFromClientUI(new clientMessage(clientMessages.detDoctorsList,selectedResidency,1));
+    			hourList.getItems().remove(0,hourList.getItems().size());
+    			docList.setDisable(false);
+    			this.datePicker.setValue(null);
+    			this.setApp.setVisible(false);
     }
 
-    private void showAppointments(int doctorID){
-    	presentAppList.setVisible(true);
-    	ObservableList<String> items = presentAppList.getItems();
-    	ArrayList<Appointment> list= logic.getAvailableAppointments(doctorID);
-    	for (Appointment app : list )
+
+
+    @FXML
+    void doclistener(MouseEvent event) {
+    	if(null!=this.docList.getSelectionModel().getSelectedItem())
     	{
-    		items.add(app.getAppTime());
+    	doctor selectedDoctor=docList.getSelectionModel().getSelectedItem();
+    	System.out.println(selectedDoctor);
+    	client.handleMessageFromClientUI(new clientMessage(clientMessages.getAppointments,selectedDoctor,null));
+    	this.datePicker.setValue(null);
+    	hourList.getItems().remove(0,hourList.getItems().size());
+    	this.setApp.setVisible(false);
+    	}
+
+    }
+
+    @FXML
+    void applistener(MouseEvent event)
+    {
+    	if(null!=this.hourList.getSelectionModel().getSelectedItem())
+    	{
+    	Appointment selectedAppointment=this.hourList.getSelectionModel().getSelectedItem();
+    	System.out.println(selectedAppointment);
+    	this.setApp.setVisible(true);
     	}
     }
 
-    private void showDoctorsList(String residency){
-    	SpecialDoctorsList.setVisible(true);
-    	ObservableList<String> items = SpecialDoctorsList.getItems();
-    	ArrayList<doctor> list = logic.getDoctorsList(residency) ;
-    	for (doctor doc : list ){
-    		items.add(doc.toString());
+    @FXML
+    void appSet(ActionEvent event) {
+    	if(null!=this.hourList.getSelectionModel().getSelectedItem())
+    	{
+    	Appointment selectedAppointment=this.hourList.getSelectionModel().getSelectedItem();
+    	client.handleMessageFromClientUI(new clientMessage(clientMessages.makeAppointment,selectedAppointment,null));
+    	Alert alert = new Alert(AlertType.INFORMATION);
+    	alert.setTitle("Appointment Was Set");
+    	alert.setHeaderText("Your Appointment details:");
+    	alert.setContentText("Doctor: "+selectedAppointment.doctor.fName+" "+selectedAppointment.doctor.lName
+			+"\n"+"Time: "+selectedAppointment.appTime+"\n"+ "Location: "+ selectedAppointment.doctor.location);
+
+    	alert.showAndWait();
+    	this.hourList.getItems().remove(this.hourList.getSelectionModel().getSelectedItem());
     	}
     }
 
-
     @FXML
-    void makeApp(ActionEvent event) {
+    public void initialize()
+    {
+    	datePicker.setOnAction(event -> {
+            LocalDate date = datePicker.getValue();
+            ObservableList<Appointment> appointments= FXCollections.observableArrayList();
+           for(Appointment t:this.appointments){
+        	   String dateCompare=date.toString();
+        	   if(dateCompare.equals(t.appTime.substring(0, 10))){
+        		   appointments.add(t);
+        	   }
+           }
+           hourList.getItems().remove(0,hourList.getItems().size());
+           hourList.setItems(appointments);
+        });
+    	datePicker.setConverter(new StringConverter<LocalDate>()
+    	{
+    	    private DateTimeFormatter dateTimeFormatter=DateTimeFormatter.ofPattern("yyyy/MM/dd");
 
+    	    @Override
+    	    public String toString(LocalDate localDate)
+    	    {
+    	        if(localDate==null)
+    	            return "";
+    	        return dateTimeFormatter.format(localDate);
+    	    }
 
-    	//client.client.handleMessageFromClientUI(new clientMessage("123",new Appointment("2017-01-20 08:00",3,new familyDoctor(1,"boobs",1))));
-
-		client.handleMessageFromClientUI(new clientMessage("A",null));
-		//serverMessage temp=(serverMessage)client.message;
-		//System.out.print(temp.message+" from the gui");
-    	//MakeApp.setVisible(false);
-    	/*DoctorLable.setVisible(true);
-    	cFamily.setVisible(true);
-    	cSpecialist.setVisible(true);*/
-
-
+    	    @Override
+    	    public LocalDate fromString(String dateString)
+    	    {
+    	        if(dateString==null || dateString.trim().isEmpty())
+    	        {
+    	            return null;
+    	        }
+    	        return LocalDate.parse(dateString,dateTimeFormatter);
+    	    }
+    	});
     }
 
-    @FXML
-    void cFamilyDoc(ActionEvent event) {
-    	cFamily.setVisible(false);
-    	cSpecialist.setVisible(false);
-      	DoctorLable.setVisible(false);
-      	showAppointments(2);
+    private Callback<DatePicker, DateCell> getDayCellFactory(Set<String> onlyDates) {
 
+        final Callback<DatePicker, DateCell> dayCellFactory = new Callback<DatePicker, DateCell>() {
 
-    }
-
-    @FXML
-    void cSpecialistDoc(ActionEvent event) {
-    	cFamily.setVisible(false);
-    	cSpecialist.setVisible(false);
-    	DoctorLable.setVisible(false);
-
+            @Override
+            public DateCell call(final DatePicker datePicker) {
+                return new DateCell() {
+                    @Override
+                    public void updateItem(LocalDate item, boolean empty) {
+                        super.updateItem(item, empty);
+                        // Disable totall booked days from Calendar
+                        setDisable(true);
+                        setStyle("-fx-background-color: #ffc0cb;");
+                        SimpleDateFormat justDate= new SimpleDateFormat("yyyy-MM-dd");
+                        Calendar cal=Calendar.getInstance();
+                        for(String app:onlyDates){
+                        	try {
+								;
+								cal.setTime(justDate.parse(app));
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+                        	if(item.isEqual(LocalDate.parse(justDate.format(cal.getTime())))){
+                        		  setDisable(false);
+                                  setStyle(null);
+                        	}
+                        }
+                    }
+                };
+            }
+        };
+        return dayCellFactory;
     }
 
 	@Override
 	public Collection<Object> display(Object message) {
-		serverMessage temp= (serverMessage) message;
-		//text.setText(temp.message);
-		ObservableList<String> hour= FXCollections.observableArrayList();
-		for(Appointment t:temp.data){
-			hour.add(t.appTime);
+		if(message instanceof String ){
+			System.out.println("why?");
+			return null;
 		}
-		table.setItems(hour);
-		return null;
-	}
+
+		serverMessage temp= (serverMessage) message;
+		if(temp.message.equals("residencies")){
+		ObservableList<String> hour= FXCollections.observableArrayList();
+		for(Object t:temp.data){
+			hour.add(t.toString());
+			System.out.print(t.toString());
+		}
+		Platform.runLater(new Runnable(){
+			public void run(){
+			resList.setItems(hour);
+			}
+		});
+		}
+		else if(temp.message.equals("doctors")){
+		ObservableList<doctor> doctors= FXCollections.observableArrayList();
+		for(Object t:temp.data){
+			doctors.add((doctor) t);
+			System.out.println(t);
+		}
+		Platform.runLater(new Runnable(){
+			public void run(){
+				docList.getItems().remove(0,docList.getItems().size());
+				docList.setItems(doctors);
+			}
+		});
+		}
+		else if(temp.message.equals("appointments"))
+		{
+			ObservableList<Appointment> appointments= FXCollections.observableArrayList();
+			Set<String> onlyDates=new HashSet<String>();
+			Appointment appt;
+			for(Object t:temp.data){
+				appt= (Appointment) t;
+				appointments.add(appt);
+				//get unique set of dates with no duplicates
+				onlyDates.add(appt.appTime.substring(0, 10));
+			}
+			this.appointments=appointments;
+			Platform.runLater(new Runnable(){
+				public void run(){
+					 Callback<DatePicker, DateCell> dayCellFactory= getDayCellFactory(onlyDates);
+					 datePicker.setDayCellFactory(dayCellFactory);
+				}
+			});
+		}
+
+	return null;
 }
 
+
+
+
+}
 

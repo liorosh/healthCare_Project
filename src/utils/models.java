@@ -5,35 +5,39 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.TimerTask;
 
 import utils.models.Appointment;
 
 public interface models {
 
 	public class Message implements Serializable {
-		public String message;
 
-		public Message(String message){
-			this.message=message;
-		}
 	}
 
 	public class serverMessage extends Message
 	{
-		public Collection<Appointment> data;
 
-		public serverMessage(String message, Collection<Appointment> result) {
-			super(message);
+		public Collection<Object> data;
+		public Object message;
+
+		public serverMessage(String message, Collection<Object> result) {
 			this.data= result;
+			this.message=message;
 		}
+
+
 
 	}
 
 	public class clientMessage extends Message{
+		public clientMessages clientmessage;
 		public Object data;
-		public clientMessage(String message, Object data) {
-			super(message);
+		public Object additionalData;
+		public clientMessage(clientMessages message, Object data, Object i) {
+			this.clientmessage=message;
 			this.data=data;
+			this.additionalData=i;
 		}
 
 	}
@@ -95,8 +99,22 @@ public interface models {
 		{
 			return insuredID;
 		}
+		@Override
+		public String toString(){
+		    return (this.appTime);
+		}
 
+	}
 
+	class user implements Serializable{
+		int id;
+		String firstName;
+		String lastName;
+		public user(int id,String firstName, String lastName){
+			this.id=id;
+			this.firstName=firstName;
+			this.lastName=lastName;
+		}
 	}
 
 	class employee implements Serializable
@@ -106,8 +124,8 @@ public interface models {
 
 	class doctor extends employee
 	{
-		String fName;
-		String lName;
+		public String fName;
+		public String lName;
 		public String residency;
 		public int location;
 		public doctor(int i) {
@@ -125,6 +143,10 @@ public interface models {
 			this.residency=res;
 			this.location=branch;
 		}
+		@Override
+		public String toString(){
+		    return (this.fName+this.lName);
+		}
 	}
 
 	class familyDoctor extends doctor
@@ -137,6 +159,10 @@ public interface models {
 
 		public familyDoctor(int i, String string, int j) {
 			super(i,string,j);
+		}
+
+		public familyDoctor(int id, String residency, int location, String firstname, String lastname) {
+			super(id,residency,location,firstname,lastname);
 		}
 
 	}
@@ -152,6 +178,12 @@ public interface models {
 		public specialistDoctor(int i, String string, int j) {
 			super(i,string,j);
 		}
+		public specialistDoctor(int id, String residency, int location, String firstname, String lastname) {
+			super(id,residency,location,firstname,lastname);
+		}
 
 	}
+
+	enum clientMessages{getResidency,detDoctorsList,getAppointments,makeAppointment,cancelAppointment,Login};
+
 }

@@ -5,7 +5,12 @@ package server;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
+
 import utils.models.*;
 /*import java.io.*;
 import java.sql.Connection;
@@ -76,22 +81,61 @@ public class Server extends AbstractServer
   {
 	 clientMessage message=(clientMessage) msg;
 	 serverMessage results = null;
-	 if(message.message.equals("A"))	{
-
-		 try {
-			 Collection<Appointment> result=logic.getPatientsApoointments(1);
-			  results= new serverMessage("results",result);
-			  try {
-				client.sendToClient(results);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+	switch(message.clientmessage){
+	case Login:
+		try{
+		Collection<Object> result= logic.loginUser(Integer.parseInt(message.data.toString()), message.additionalData.toString(), 2);
+		results= new serverMessage("loginSucces", result);
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+		break;
+	case getResidency:
+		try {
+			Collection<Object> result=logic.getResidency();
+			results= new serverMessage("residencies",result);
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		break;
+	case detDoctorsList:
+		try {
+			Collection<Object> result=logic.getDoctors(message.data.toString(),Integer.parseInt(message.additionalData.toString()) );
+			results= new serverMessage("doctors",result);
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		break;
+	case getAppointments:
+		try {
+			Collection<Object> result = logic.getavailableAppointments((doctor) message.data);
+			results= new serverMessage("appointments",result);
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		break;
 
+	case makeAppointment:
+		try {
+			boolean answer=logic.makeAppointments((Appointment) message.data);
+			results=new serverMessage("makeAppSuccess",null);
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		break;
+	}
+
+
+	 try {
+		 client.sendToClient(results);
+	 } catch (IOException e) {
+		 // TODO Auto-generated catch block
+		 e.printStackTrace();
 	 }
   }
 
@@ -102,6 +146,25 @@ public class Server extends AbstractServer
    */
   protected void serverStarted()
   {
+	 /* Calendar today = Calendar.getInstance();
+	  today.set(Calendar.HOUR_OF_DAY, 00);
+	  today.set(Calendar.MINUTE, 00);
+	  today.set(Calendar.SECOND, 0);
+		new Timer().schedule(
+			    new TimerTask() {
+					@Override
+					public void run() {
+						try {
+							logic.updatefreeAppointments();
+
+							System.out.println("yes i did!");
+						} catch (SQLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+
+			    },today.getTime() , TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS));*/
     System.out.println
       ("Server listening for connections on port " + getPort());
   }

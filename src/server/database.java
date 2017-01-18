@@ -4,7 +4,7 @@ public interface database
 {
 	public final String SELECT_DOCTORS_BY_RESIDENCY = "SELECT EMPLOYEES.FIRSTNAME, EMPLOYEES.LASTNAME, EMPLOYEES.EMPLOYEEID,EMPLOYEES.BRANCH FROM EMPLOYEES WHERE EMPLOYEES.RESIDENCY = ? ";
 
-	public final String SELECT_RESIDENCY = "SELECT DISTINCT EMPLOYEES.RESIDENCY FROM EMPLOYEES ";
+	public final String SELECT_RESIDENCY = "SELECT DISTINCT EMPLOYEES.RESIDENCY FROM EMPLOYEES where employees.position='doctor' ";
 
 	public final String SELECT_DOCTORS_BY_DATE = " SELECT E.EMPLOYEEID, E.FIRSTNAME, E.LASTNAME, E.BRANCH, E.Residency "
 				+ "FROM EMPLOYEES E LEFT JOIN "
@@ -46,9 +46,9 @@ public interface database
 
 	public final String FILL_FAMILY_APPOINTMENT_TEMPLATE = "insert into familyfreeappointments values (?,default,default,default,default,default,default)";
 
-	public final String FILL_SPECIALIST_APPOINTMENT_TEMPLATE = "insert into specialistreeappointments values (?,default,default,default,default,default,default)";
+	public final String FILL_SPECIALIST_APPOINTMENT_TEMPLATE = "insert into specialistfreeappointments values (?,default,default,default,default,default,default); ";
 
-	public final String LOGIN_PATIENT ="SELECT * FROM patients where patients.insuranceNumber = ? and patients.password = ? ";
+	public final String LOGIN_PATIENT ="SELECT patients.insuranceNumber,patients.firstName,patients.lastName FROM patients where patients.insuranceNumber = ? and patients.password = ? ";
 
 	public final String LOGIN_EMPLOYEE = "SELECT * FROM employees where employees.employeeID = ? and employees.password = ? ";
 
@@ -59,6 +59,7 @@ public interface database
 				+ "where sa.insuredID=? ";
 
 	public final String MOVE_APPOINTMENTS_TO_PAST = "insert into pastappointments select * from scheduledappointments "
-				+" where scheduledappointments.appTime < now(); "
-				+" delete from scheduledappointments where scheduledappointments.appTime < now(); " ;
+				+" where scheduledappointments.appTime < now() ; ";
+	public final String DELETE_FROM_SCHEDULED = "delete from scheduledappointments where scheduledappointments.appTime < now() ";
+
 }

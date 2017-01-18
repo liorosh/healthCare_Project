@@ -1,8 +1,6 @@
 package clientInsured;
 
 import java.net.URL;
-
-import client.client.ChatClient;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
@@ -13,7 +11,6 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-
 			//ChatClient client= new ChatClient("localhost",5555,this);
 			URL url = getClass().getResource("mainUI.fxml");
 			AnchorPane pane = FXMLLoader.load( url );
