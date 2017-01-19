@@ -106,10 +106,10 @@ public class mainUIController implements ChatIF{
 
 		serverMessage temp= (serverMessage) message;
 		if(temp.data==null){
-			System.out.print("not logged in");
+			System.out.println("not logged in");
 		}
 		else{
-			System.out.print("logged in");
+			System.out.println("logged in");
 			Platform.runLater(new Runnable(){
 				public void run(){
 					tabs.getSelectionModel().select(1);
