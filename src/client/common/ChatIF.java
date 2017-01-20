@@ -21,5 +21,5 @@ public interface ChatIF
    * a UI.
  * @return
    */
-  public abstract Collection<Object> display(Object message);
+  public abstract void display(Object message);
 }

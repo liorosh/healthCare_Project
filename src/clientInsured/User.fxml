@@ -4,17 +4,18 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="450.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="clientInsured.userController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="414.0" prefWidth="546.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="clientInsured.UserController">
    <children>
       <Button fx:id="set" layoutX="319.0" layoutY="236.0" mnemonicParsing="false" onAction="#tryquery" text="Button" />
       <ListView fx:id="table" layoutX="45.0" layoutY="242.0" prefHeight="144.0" prefWidth="200.0" />
       <TextField fx:id="text" layoutX="262.0" layoutY="301.0" />
-      <TableView fx:id="apptable" editable="true" layoutX="14.0" layoutY="22.0" prefHeight="200.0" prefWidth="383.0">
+      <TableView fx:id="apptable" editable="true" layoutX="5.0" layoutY="22.0" onMouseClicked="#print" prefHeight="200.0" prefWidth="485.0">
         <columns>
           <TableColumn fx:id="date" prefWidth="111.0" text="Date" />
-          <TableColumn fx:id="docName" prefWidth="96.0" text="Doctors Name" />
-          <TableColumn fx:id="loc" prefWidth="65.0" text="Location" />
-            <TableColumn fx:id="res" prefWidth="91.0" text="Residency" />
+          <TableColumn fx:id="orderTime" prefWidth="98.0" text="Ordered At:" />
+          <TableColumn fx:id="docName" prefWidth="105.0" text="Doctors Name" />
+          <TableColumn fx:id="res" prefWidth="84.0" text="Residency" />
+          <TableColumn fx:id="loc" prefWidth="86.0" text="Location" />
         </columns>
       </TableView>
    </children>

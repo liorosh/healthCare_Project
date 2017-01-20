@@ -16,6 +16,13 @@ public interface database
 				+ "WHERE E.RESIDENCY = ? "
 				+ "ORDER BY (LAST_APPTIME IS NOT NULL) DESC, LAST_APPTIME DESC ";
 
+	public final String SELECT_FAMILY_DOCTOR= "select pa.familyDocID,e.firstName,e.lastName,e.branch,e.Residency from patients pa "
+				+ " left join ( "
+				+ " select e.firstName,e.lastName,e.employeeID,e.branch,e.Residency from employees e "
+				+ " where e.Residency='family' "
+				+ " group by e.employeeID "
+				+ " ) e on pa.familyDocID=e.employeeID "
+				+ " where pa.insuranceNumber=?; ";
 	public final String MAKEAPPOINTMENT = "insert into scheduledappointments values (?,?,?,?,?,?,default)";
 
 	public final String DELETE_APPOINTMENT = " delete from scheduledappointments where scheduledappointments.appTime = ? "
@@ -33,12 +40,12 @@ public interface database
 	public final String GET_FREE_FAMILY_APPOINTMENTS = "select ffp.appTime from familyfreeappointments ffp "
 				+ "where ffp.appTime not in( "
 				+ "select sa.appTime from scheduledappointments sa "
-				+ "where sa.doctorID=?) ";
+				+ "where sa.doctorID=?) and ffp.appTime>now() ";
 
 	public final String GET_FREE_SPECIALIST_APPOINTMENTS = "select sfp.appTime from specialistfreeappointments sfp "
 				+ "where sfp.appTime not in( "
 				+ "select sa.appTime from scheduledappointments sa "
-				+ "where sa.doctorID=?) ";
+				+ "where sa.doctorID=?) and sfp.appTime>now() ";
 
 	public final String UPDATE_SPECIALIST_APPOINTMENTS_TO_DATE = "delete from specialistfreeappointments where specialistfreeappointments.appTime<now() ";
 
@@ -48,9 +55,9 @@ public interface database
 
 	public final String FILL_SPECIALIST_APPOINTMENT_TEMPLATE = "insert into specialistfreeappointments values (?,default,default,default,default,default,default); ";
 
-	public final String LOGIN_PATIENT ="SELECT patients.insuranceNumber,patients.firstName,patients.lastName FROM patients where patients.insuranceNumber = ? and patients.password = ? ";
+	public final String LOGIN_PATIENT ="SELECT patients.insuranceNumber,patients.firstName,patients.lastName, patients.Email,patients.familyDocID FROM patients where patients.insuranceNumber = ? and patients.password = ? ";
 
-	public final String LOGIN_EMPLOYEE = "SELECT * FROM employees where employees.employeeID = ? and employees.password = ? ";
+	public final String LOGIN_EMPLOYEE = "SELECT employees.employeeID,employees.firstName,employees.lastName,employees.email ,employees.branch,employees.Residency FROM employees where employees.employeeID = ? and employees.password = ? ";
 
 	public final String GET_APPOINTMENTS_BY_PATIENT = "SELECT sa.appTime,sa.orderTime,sa.insuredID,sa.location,sa.doctorID,sa.residency,sa.location "
 				+" ,e.firstName , e.lastName "

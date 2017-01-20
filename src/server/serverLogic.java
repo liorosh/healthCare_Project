@@ -118,6 +118,7 @@ public class serverLogic
 		} catch (Exception ex) {/* handle the error*/}
 		Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/softeng","root","1234");
 		PreparedStatement stmt=conn.prepareStatement(database.SELECT_DOCTORS_BY_DATE);
+		//TODO add query situation for family doctor, query is already ready in database. just add if statement
 		stmt.setInt(1,insuredId);
 		stmt.setString(2, residency);
 		stmt.setString(3, residency);
@@ -153,9 +154,9 @@ public class serverLogic
 		conn.close();
 		return true;
 	}
-	public Collection<Appointment> getDoctorsAppointmets(int doctorId) throws SQLException
+	public Collection<Object> getDoctorsAppointmets(int doctorId) throws SQLException
 	{
-		Collection<Appointment> doctorsAppointments= new ArrayList<Appointment>();
+		Collection<Object> doctorsAppointments= new ArrayList<Object>();
 		try
 		{
           Class.forName("com.mysql.jdbc.Driver").newInstance();
@@ -165,8 +166,8 @@ public class serverLogic
 		stmt.setInt(1,doctorId);
 		ResultSet rs=stmt.executeQuery();
 		while(rs.next())
-		{
-			doctorsAppointments.add(new Appointment(rs.getString(1),rs.getInt(4),rs.getString(2),rs.getString(3)));
+		{//select sa.appTime ,sa.insuredID, p.firstName, p.lastName ,p.insuranceNumber
+			doctorsAppointments.add(new Appointment(rs.getString(1),rs.getInt(2),rs.getString(3),rs.getString(4)));
 			//System.out.println(rs.getString(1)+" "+ rs.getString(2)+ " "+ rs.getString(3)+" "+ rs.getString(4));
 		}
 		rs.close();
@@ -245,25 +246,32 @@ public class serverLogic
 		}
 		stmt.close();
 	}
-	public Collection<Object> loginUser(int loginId, String password, int userFlag) throws SQLException
+	public Collection<Object> loginUser(int loginId, String password, clientMessages userType) throws SQLException
 	{
 		Collection<Object> userreturned = new ArrayList<Object>();
 		PreparedStatement stmt=null;
-		user loggedInUser;
+		user loggedInUser = null;
 		try
 	{
         Class.forName("com.mysql.jdbc.Driver").newInstance();
 		} catch (Exception ex) {/* handle the error*/}
 		Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/softeng","root","1234");
-		if(1==userFlag)
+		if(clientMessages.employeeLogin==userType)
 			stmt= conn.prepareStatement(database.LOGIN_EMPLOYEE);
-		else if (2==userFlag)
+		else if (clientMessages.insuredLogin==userType)
 			stmt= conn.prepareStatement(database.LOGIN_PATIENT);
 		stmt.setInt(1, loginId);
 		stmt.setString(2, password);
 		ResultSet rs = stmt.executeQuery();
 		if(rs.next()){
-			loggedInUser= new user(rs.getInt(1),rs.getString(2),rs.getString(3));
+			if(clientMessages.insuredLogin==userType)
+				loggedInUser= new patient(rs.getInt(1),rs.getString(2),rs.getString(3),rs.getInt(5),rs.getString(4));
+			else if (clientMessages.employeeLogin==userType){
+			if(rs.getString(5).equals("family"))
+				loggedInUser= new familyDoctor(rs.getInt(1),rs.getString(6),rs.getInt(5),rs.getString(2),rs.getString(3),rs.getString(4));
+			else
+				loggedInUser= new specialistDoctor(rs.getInt(1),rs.getString(6),rs.getInt(5),rs.getString(2),rs.getString(3),rs.getString(4));
+			}
 			userreturned.add(loggedInUser);
 			stmt.close();
 			conn.close();
@@ -276,9 +284,9 @@ public class serverLogic
 
 		return null;
 	}
-	public Collection<Appointment> getPatientsApoointments(int insuredId) throws SQLException
+	public Collection<Object> getPatientsApoointments(int insuredId) throws SQLException
 	{
-		Collection<Appointment> patientsAppointments = new ArrayList<Appointment>();
+		Collection<Object> patientsAppointments = new ArrayList<Object>();
 		PreparedStatement stmt = null;
 		ResultSet rs;
 		try
@@ -291,8 +299,12 @@ public class serverLogic
 		rs = stmt.executeQuery();
 		while (rs.next())
 		{
-			patientsAppointments.add(new Appointment(rs.getString(1),insuredId,new doctor(rs.getInt(5),rs.getString(6),rs.getInt(7),
+			if(rs.getString(5).equals("family"))
+			patientsAppointments.add(new Appointment(rs.getString(1),rs.getString(2),insuredId,new familyDoctor(rs.getInt(5),rs.getString(6),rs.getInt(7),
 																							rs.getString(8),rs.getString(9))));
+			else
+				patientsAppointments.add(new Appointment(rs.getString(1),rs.getString(2),insuredId,new specialistDoctor(rs.getInt(5),rs.getString(6),rs.getInt(7),
+						rs.getString(8),rs.getString(9))));
 		}
 		rs.close();
 		stmt.close();

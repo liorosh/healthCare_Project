@@ -1,51 +1,24 @@
 package clientInsured;
 
 
-import java.awt.EventQueue;
-import java.io.IOException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.DayOfWeek;
+import java.text.*;
 import java.time.LocalDate;
-import java.time.chrono.ChronoLocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-
-import client.client.ChatClient;
-import client.common.ChatIF;
+import java.util.*;
+import client.client.*;
+import client.common.*;
 import utils.models.*;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.collections.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DateCell;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.MouseEvent;
-import javafx.util.Callback;
-import javafx.util.StringConverter;
+import javafx.util.*;
 
 public class SetAppointmentsSystemGUI implements ChatIF{
 
-public SetAppointmentsSystemGUI() throws IOException{
-
-
-}
 	ChatClient client;
 	SetAppointmentsSystem logic;
 
@@ -87,14 +60,15 @@ public SetAppointmentsSystemGUI() throws IOException{
 
     @FXML
     void reslistener(MouseEvent event) {
-    			String selectedResidency=resList.getSelectionModel().getSelectedItem();
-    			if(null==selectedResidency)
-    				return;
-    			client.handleMessageFromClientUI(new clientMessage(clientMessages.detDoctorsList,selectedResidency,1));
-    			hourList.getItems().remove(0,hourList.getItems().size());
-    			docList.setDisable(false);
-    			this.datePicker.setValue(null);
-    			this.setApp.setVisible(false);
+		String selectedResidency=resList.getSelectionModel().getSelectedItem();
+		if(null==selectedResidency)
+			return;
+		patient patient=(patient)client.getUserSession();
+		client.handleMessageFromClientUI(new clientMessage(clientMessages.detDoctorsList,selectedResidency,patient.insuredID));
+		hourList.getItems().remove(0,hourList.getItems().size());
+		docList.setDisable(false);
+		this.datePicker.setValue(null);
+		this.setApp.setVisible(false);
     }
 
 
@@ -105,7 +79,7 @@ public SetAppointmentsSystemGUI() throws IOException{
     	{
     	doctor selectedDoctor=docList.getSelectionModel().getSelectedItem();
     	System.out.println(selectedDoctor);
-    	client.handleMessageFromClientUI(new clientMessage(clientMessages.getAppointments,selectedDoctor,null));
+    	client.handleMessageFromClientUI(new clientMessage(clientMessages.getfreeAppointments,selectedDoctor,null));
     	this.datePicker.setValue(null);
     	hourList.getItems().remove(0,hourList.getItems().size());
     	this.setApp.setVisible(false);
@@ -129,11 +103,13 @@ public SetAppointmentsSystemGUI() throws IOException{
     	if(null!=this.hourList.getSelectionModel().getSelectedItem())
     	{
     	Appointment selectedAppointment=this.hourList.getSelectionModel().getSelectedItem();
+    	patient session=(patient)this.client.getUserSession();
+    	selectedAppointment.insuredID=session.insuredID;
     	client.handleMessageFromClientUI(new clientMessage(clientMessages.makeAppointment,selectedAppointment,null));
     	Alert alert = new Alert(AlertType.INFORMATION);
     	alert.setTitle("Appointment Was Set");
     	alert.setHeaderText("Your Appointment details:");
-    	alert.setContentText("Doctor: "+selectedAppointment.doctor.fName+" "+selectedAppointment.doctor.lName
+    	alert.setContentText("Doctor: "+selectedAppointment.doctor.firstName+" "+selectedAppointment.doctor.lastName
 			+"\n"+"Time: "+selectedAppointment.appTime+"\n"+ "Location: "+ selectedAppointment.doctor.location);
 
     	alert.showAndWait();
@@ -145,17 +121,21 @@ public SetAppointmentsSystemGUI() throws IOException{
     public void initialize()
     {
     	datePicker.setOnAction(event -> {
-            LocalDate date = datePicker.getValue();
-            ObservableList<Appointment> appointments= FXCollections.observableArrayList();
-           for(Appointment t:this.appointments){
-        	   String dateCompare=date.toString();
-        	   if(dateCompare.equals(t.appTime.substring(0, 10))){
-        		   appointments.add(t);
-        	   }
-           }
-           hourList.getItems().remove(0,hourList.getItems().size());
-           hourList.setItems(appointments);
-        });
+        LocalDate date = datePicker.getValue();
+        ObservableList<Appointment> appointments= FXCollections.observableArrayList();
+        for(Appointment t:this.appointments)
+        {
+    	   if (null!=date){
+    	   String dateCompare=date.toString();
+    	   if(dateCompare.equals(t.appTime.substring(0, 10)))
+    	   {
+    		   appointments.add(t);
+    	   }
+	   	}
+        }
+        hourList.getItems().remove(0,hourList.getItems().size());
+        hourList.setItems(appointments);
+    	});
     	datePicker.setConverter(new StringConverter<LocalDate>()
     	{
     	    private DateTimeFormatter dateTimeFormatter=DateTimeFormatter.ofPattern("yyyy/MM/dd");
@@ -183,7 +163,6 @@ public SetAppointmentsSystemGUI() throws IOException{
     private Callback<DatePicker, DateCell> getDayCellFactory(Set<String> onlyDates) {
 
         final Callback<DatePicker, DateCell> dayCellFactory = new Callback<DatePicker, DateCell>() {
-
             @Override
             public DateCell call(final DatePicker datePicker) {
                 return new DateCell() {
@@ -197,7 +176,6 @@ public SetAppointmentsSystemGUI() throws IOException{
                         Calendar cal=Calendar.getInstance();
                         for(String app:onlyDates){
                         	try {
-								;
 								cal.setTime(justDate.parse(app));
 							} catch (ParseException e) {
 								// TODO Auto-generated catch block
@@ -216,10 +194,10 @@ public SetAppointmentsSystemGUI() throws IOException{
     }
 
 	@Override
-	public Collection<Object> display(Object message) {
+	public void display(Object message) {
 		if(message instanceof String ){
 			System.out.println("why?");
-			return null;
+
 		}
 
 		serverMessage temp= (serverMessage) message;
@@ -268,11 +246,7 @@ public SetAppointmentsSystemGUI() throws IOException{
 			});
 		}
 
-	return null;
-}
-
-
-
+	}
 
 }
 

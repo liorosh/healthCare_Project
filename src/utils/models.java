@@ -63,6 +63,14 @@ public interface models {
 			this.insuredID = ID;
 			this.doctor = doc;
 		}
+		public Appointment(String apptime ,String ordertime ,int ID, doctor doc)
+		{
+			this.appTime=apptime;
+
+			this.orderTime = ordertime;
+			this.insuredID = ID;
+			this.doctor = doc;
+		}
 
 		public Appointment(String apptime,int ID, String first, String Last){
 			this.doctor=null;
@@ -107,45 +115,69 @@ public interface models {
 	}
 
 	class user implements Serializable{
-		int id;
-		String firstName;
-		String lastName;
-		public user(int id,String firstName, String lastName){
-			this.id=id;
+
+		public String firstName;
+		public String lastName;
+		public user(String firstName, String lastName){
 			this.firstName=firstName;
 			this.lastName=lastName;
 		}
+
+		public user(){}
 	}
 
-	class employee implements Serializable
+	class patient extends user{
+		public int insuredID;
+		int docotrsID;
+		String Email;
+		public patient(int id, String firstName, String lastName,int docid,String mail) {
+			super(firstName, lastName);
+			this.insuredID=id;
+			this.docotrsID=docid;
+			this.Email=mail;
+		}
+	}
+
+
+
+
+	class employee extends user
 	{
 		public int id;
+		public String Email;
+		public employee(String firstName, String lastName,int id, String mail) {
+			super(firstName, lastName);
+			this.id=id;
+			this.Email=mail;
+		}
+		public employee(int id){
+			this.id=id;
+		}
+
+
 	}
 
 	class doctor extends employee
 	{
-		public String fName;
-		public String lName;
 		public String residency;
 		public int location;
-		public doctor(int i) {
-			this.id=i;
+		public doctor(int id) {
+			super(id);
 		}
-		public doctor(int id,String residnecy, int location, String first,String last) {
-			this.id=id;
+		public doctor(int id,String residnecy, int location, String first,String last,String mail) {
+			super(first,last,id, mail);
 			this.residency=residnecy;
 			this.location=location;
-			this.fName=first;
-			this.lName=last;
+
 		}
 		public doctor(int id, String res, int branch) {
-			this.id=id;
+			super(id);
 			this.residency=res;
 			this.location=branch;
 		}
 		@Override
 		public String toString(){
-		    return (this.fName+this.lName);
+		    return (this.firstName+this.lastName);
 		}
 	}
 
@@ -161,8 +193,12 @@ public interface models {
 			super(i,string,j);
 		}
 
+		public familyDoctor(int id, String residency, int location, String firstname, String lastname, String mail) {
+			super(id,residency,location,firstname,lastname,mail);
+		}
+
 		public familyDoctor(int id, String residency, int location, String firstname, String lastname) {
-			super(id,residency,location,firstname,lastname);
+			super(id,residency,location,firstname,lastname,null);
 		}
 
 	}
@@ -178,12 +214,15 @@ public interface models {
 		public specialistDoctor(int i, String string, int j) {
 			super(i,string,j);
 		}
+		public specialistDoctor(int id, String residency, int location, String firstname, String lastname, String mail) {
+			super(id,residency,location,firstname,lastname,mail);
+		}
 		public specialistDoctor(int id, String residency, int location, String firstname, String lastname) {
-			super(id,residency,location,firstname,lastname);
+			super(id,residency,location,firstname,lastname,null);
 		}
 
 	}
 
-	enum clientMessages{getResidency,detDoctorsList,getAppointments,makeAppointment,cancelAppointment,Login};
+	enum clientMessages{getResidency,detDoctorsList,getfreeAppointments,makeAppointment,cancelAppointment,Login,getDoctorsAppointments,employeeLogin,insuredLogin,getpatientAppointments};
 
 }

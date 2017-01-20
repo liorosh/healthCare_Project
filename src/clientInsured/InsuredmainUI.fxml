@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane fx:id="anchor" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="539.0" prefWidth="605.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="clientInsured.MainUIController">
+   <children>
+      <TabPane fx:id="tabs" prefHeight="539.0" prefWidth="608.0" tabClosingPolicy="UNAVAILABLE">
+         <tabs>
+            <Tab fx:id="set" closable="false" disable="true" text="Set Appointment">
+               <content>
+                  <fx:include fx:id="makeTab" source="MakeAppoint.fxml" />
+               </content>
+            </Tab>
+            <Tab fx:id="myapp" closable="false" disable="true" text="My Appointments">
+               <content>
+                  <fx:include fx:id="deleteTab" source="user.fxml" />
+               </content>
+            </Tab>
+         </tabs>
+      </TabPane>
+   </children>
+</AnchorPane>
+
+
+
+
+

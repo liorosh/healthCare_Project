@@ -5,7 +5,7 @@
 package client.client;
 
 import ocsf.client.*;
-import utils.models.serverMessage;
+import utils.models.*;
 import client.common.*;
 
 
@@ -29,13 +29,15 @@ public class ChatClient extends AbstractClient
    * the display method in the client.
    */
   ChatIF clientUI;
-  public void setClient(ChatIF client)
-  {
-	  this.clientUI=client;
-  }
+  user userSession;
   //Constructors ****************************************************
 
-  /**
+  public user getUserSession() {
+	return userSession;
+}
+
+
+/**
    * Constructs an instance of the chat client.
    *
    * @param host The server to connect to.
@@ -63,6 +65,8 @@ public class ChatClient extends AbstractClient
   {
 	  serverMessage message =(serverMessage) msg;
 	  message=(serverMessage) msg;
+	 if(message.message.equals("loginSucces"))
+		  this.userSession=(user) message.data.iterator().next();
 	  clientUI.display(message);
   }
 
@@ -97,5 +101,14 @@ public class ChatClient extends AbstractClient
     catch(IOException e) {}
     System.exit(0);
   }
+  /*
+   * this method is used to change client controller to route messages
+   */
+
+  public void setClient(ChatIF client)
+  {
+	  this.clientUI=client;
+  }
+
 }
 //End of ChatClient class

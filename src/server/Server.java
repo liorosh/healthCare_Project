@@ -82,10 +82,25 @@ public class Server extends AbstractServer
 	 clientMessage message=(clientMessage) msg;
 	 serverMessage results = null;
 	switch(message.clientmessage){
-	case Login:
+	case insuredLogin:
 		try{
-		Collection<Object> result= logic.loginUser(Integer.parseInt(message.data.toString()), message.additionalData.toString(), 2);
-		results= new serverMessage("loginSucces", result);
+		Collection<Object> result= logic.loginUser(Integer.parseInt(message.data.toString()), message.additionalData.toString(), clientMessages.insuredLogin);
+		if(null!=result)
+			results= new serverMessage("loginSucces", result);
+		else
+			results= new serverMessage("loginfailed", result);
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		break;
+	case employeeLogin:
+		try{
+		Collection<Object> result= logic.loginUser(Integer.parseInt(message.data.toString()), message.additionalData.toString(), clientMessages.employeeLogin);
+		if(null!=result)
+			results= new serverMessage("loginSucces", result);
+		else
+			results= new serverMessage("loginfailed", result);
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -109,7 +124,7 @@ public class Server extends AbstractServer
 			e1.printStackTrace();
 		}
 		break;
-	case getAppointments:
+	case getfreeAppointments:
 		try {
 			Collection<Object> result = logic.getavailableAppointments((doctor) message.data);
 			results= new serverMessage("appointments",result);
@@ -127,6 +142,29 @@ public class Server extends AbstractServer
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+		break;
+	case getDoctorsAppointments:
+		try {
+			Collection<Object> result = logic.getDoctorsAppointmets((int) message.data);
+			results=new serverMessage("docapps",result);
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		break;
+		case getpatientAppointments:
+		Collection<Object> result;
+		try {
+			result = logic.getPatientsApoointments((int) message.data);
+			results=new serverMessage("myapps",result);
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		break;
+	default:
 		break;
 	}
 
@@ -203,6 +241,7 @@ public class Server extends AbstractServer
     serverLogic logic =serverLogic.getInstance();	//singleton use og logic functions in server
     Server sv = new Server(port,logic);
 
+    //logic.initializeAppointments();
     try
     {
       sv.listen(); //Start listening for connections

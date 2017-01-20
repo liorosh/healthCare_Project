@@ -7,17 +7,17 @@ import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 
-public class Main extends Application {
+public class Client extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
 			//ChatClient client= new ChatClient("localhost",5555,this);
-			URL url = getClass().getResource("mainUI.fxml");
+			URL url = getClass().getResource("PatientLoginUI.fxml");
 			AnchorPane pane = FXMLLoader.load( url );
 			Scene scene = new Scene( pane );
 			 // setting the stage
 			primaryStage.setScene(scene);
-			primaryStage.setTitle( "Hello World Demo" );
+			primaryStage.setTitle( "Good Health Services" );
 			primaryStage.show();
 
 		} catch(Exception e) {

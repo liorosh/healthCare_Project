@@ -1,49 +1,39 @@
 package clientInsured;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.net.URL;
 import java.util.Collection;
-
 import client.client.ChatClient;
 import client.common.ChatIF;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.application.Platform;
+import javafx.collections.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.JavaFXBuilderFactory;
-import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TableColumn.CellDataFeatures;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.AnchorPane;
-import javafx.util.Callback;
+import javafx.scene.input.MouseEvent;
+import utils.appointment;
 import utils.models.*;
 
 
-public class userController implements ChatIF{
+public class UserController implements ChatIF{
 		ChatClient client;
 
 	    @FXML
-	    private TableView<ObservableList> apptable;
+	    private TableView<appointment> apptable;
 		@FXML
-	    private TableColumn<ObservableList, String> date;
+	    private TableColumn<appointment, String> date;
 
 	    @FXML
-	    private TableColumn<ObservableList, String> res;
+	    private TableColumn<appointment, String> res;
 
 	    @FXML
-	    private TableColumn<ObservableList, String> docName;
+	    private TableColumn<appointment, String> docName;
 
 	    @FXML
-	    private TableColumn<ObservableList, String> loc;
+	    private TableColumn<appointment, String> loc;
+
+	    @FXML
+	    private TableColumn<appointment, String> orderTime;
 
 	    @FXML
 	    private Button set;
@@ -56,37 +46,50 @@ public class userController implements ChatIF{
 
 	    @FXML
 	    void tryquery(ActionEvent event) {
-	    	client.handleMessageFromClientUI(new clientMessage(clientMessages.getAppointments,null,null));
+	    	patient patient=(utils.models.patient) client.getUserSession();
+	    	client.handleMessageFromClientUI(new clientMessage(clientMessages.getpatientAppointments,patient.insuredID,null));
 	    }
 
 	    public void setclient(ChatClient client){this.client=client;}
 
 		@Override
-		public Collection<Object> display(Object message) {
+		public void display(Object message) {
 			serverMessage temp= (serverMessage) message;
 			text.setText((String) temp.message);
-			ObservableList<Appointment> hour= FXCollections.observableArrayList();
+			if(temp.message.equals("myapps"))
+			{
+				ObservableList<appointment> hour= FXCollections.observableArrayList();
+				Appointment app;
+				for(Object t:temp.data)
+				{
+					app=(Appointment) t;
+					hour.add(new appointment(app.appTime,app.orderTime,app.doctor.residency,app.getDoctor().firstName/*+" "+app.getDoctor().lastName*/,app.doctor.location));
+				}
+				date.setCellValueFactory(new PropertyValueFactory<appointment, String>("apptime"));
+				orderTime.setCellValueFactory(new PropertyValueFactory<appointment,String>("orderTime"));
+				docName.setCellValueFactory(new PropertyValueFactory<appointment, String>("doctorName"));
+				loc.setCellValueFactory(new PropertyValueFactory<appointment,String>("location"));
+				res.setCellValueFactory(new PropertyValueFactory<appointment, String>("residency"));
 
-			for(Object t:temp.data){
-				hour.add((Appointment) t);
+				Platform.runLater(new Runnable()
+				{
+					public void run(){
+						apptable.setItems(hour);
+					}
+				});
 			}
-			//Appointment app=(Appointment)temp.data;
-
-			//this.docName.setCellValueFactory(new PropertyValueFactory(t.doctor.fName+t.doctor.lName));
-
-			//this.docName.setCellValueFactory(new PropertyValueFactory<String,String>("fName"));
-			//apptable.setItems(doctor,hour);
-			docName.setVisible(true);
-			return null;
 		}
 		@FXML
 		public void initialize() throws IOException{
 
 		}
 
-		public void print(String d){
-			System.out.print(d);
-		}
+
+	    @FXML
+	    void print(MouseEvent event) {
+	    System.out.println(apptable.getSelectionModel().getSelectedItem().getdoctorName());
+
+	    }
 
 
 }
