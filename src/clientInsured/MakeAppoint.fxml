@@ -13,8 +13,8 @@
       <Label fx:id="reslbl" layoutX="33.0" layoutY="13.0" prefHeight="27.0" prefWidth="65.0" text="Residency" />
       <ListView fx:id="docList" disable="true" layoutX="29.0" layoutY="293.0" onMouseClicked="#doclistener" prefHeight="200.0" prefWidth="200.0" />
       <Label layoutX="29.0" layoutY="265.0" prefHeight="27.0" prefWidth="53.0" text="Doctors" />
-      <ListView fx:id="hourList" layoutX="340.0" layoutY="193.0" onMouseClicked="#applistener" prefHeight="221.0" prefWidth="200.0" />
-      <DatePicker fx:id="datePicker" layoutX="353.0" layoutY="83.0" promptText="pick Date">
+      <ListView fx:id="hourList" layoutX="341.0" layoutY="161.0" onMouseClicked="#applistener" prefHeight="313.0" prefWidth="200.0" visible="false" />
+      <DatePicker fx:id="datePicker" disable="true" layoutX="366.0" layoutY="51.0" promptText="pick Date">
          <effect>
             <Lighting>
                <bumpInput>

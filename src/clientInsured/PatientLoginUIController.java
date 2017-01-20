@@ -107,7 +107,7 @@ public class PatientLoginUIController implements ChatIF{
     				.getController();
     		MainUIController.client=client;
     		this.client.setClient(MainUIController);
-    		System.out.println("mainui");
+    		MainUIController.getNamelbl().setText(client.getUserSession().firstName+ " "+ client.getUserSession().lastName);
     		Scene board = new Scene(home_page_parent);
     		Stage board_stage = (Stage)  login.getScene().getWindow();
     		Platform.runLater(new Runnable(){

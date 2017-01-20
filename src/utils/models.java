@@ -28,6 +28,7 @@ public interface models {
 
 
 
+
 	}
 
 	public class clientMessage extends Message{
@@ -49,12 +50,50 @@ public interface models {
 	public class Appointment implements Serializable
 	{
 		public String appTime;
+
+		public String getAppTime() {
+			return appTime.substring(0,this.appTime.length()-5);
+		}
+		public void setAppTime(String appTime) {
+			this.appTime = appTime;
+		}
 		public String orderTime;
 		public int insuredID;
 		public final doctor doctor;
 		public String patientFirstName;
 		public String patientLastName;
+		public String getResidency() {
+			return doctor.residency;
+		}
+		public void setResidency(String residency) {
+			this.doctor.residency = residency;
+		}
 
+		public String getDoctorName() {
+			return doctor.firstName+" "+doctor.lastName;
+		}
+
+		public void setDoctorName(String firstName) {
+			this.doctor.firstName = firstName;
+		}
+
+
+		public void setInsuredFullName(String fullname)
+		{
+			//this.InsuredFullName = fullname;
+		}
+		public String getInsuredFullName()
+		{
+			return this.patientFirstName+" "+ this.patientLastName;
+		}
+
+
+		public int getLocation() {
+			return doctor.location;
+		}
+		public void setLocation(int location) {
+			doctor.location = location;
+		}
 		public Appointment(String apptime , int ID, doctor doc)
 		{
 			this.appTime=apptime;
@@ -84,20 +123,14 @@ public interface models {
 			this.appTime=appTime;
 			this.doctor = doc;
 		}
-		public void setAppTime(String time)
-		{
-			appTime = time;
-		}
 
-		public String getAppTime()
-		{
-			return appTime;
-		}
 		public String getOrderTime()
 		{
-			return orderTime;
+			return orderTime.substring(0,this.orderTime.length()-5);
 		}
-
+		public void setOrderTime(String orderTime) {
+			this.orderTime = orderTime;
+		}
 		public doctor getDoctor()
 		{
 			return doctor;
@@ -117,6 +150,8 @@ public interface models {
 	class user implements Serializable{
 
 		public String firstName;
+
+
 		public String lastName;
 		public user(String firstName, String lastName){
 			this.firstName=firstName;
@@ -160,7 +195,9 @@ public interface models {
 	class doctor extends employee
 	{
 		public String residency;
+
 		public int location;
+
 		public doctor(int id) {
 			super(id);
 		}

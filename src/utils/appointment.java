@@ -6,6 +6,12 @@ public class appointment {
 	private String orderTime;
 	private String residency;
 	private String doctorName;
+	public String getDoctorName() {
+		return doctorName;
+	}
+	public void setDoctorName(String doctorName) {
+		this.doctorName = doctorName;
+	}
 	private int location;
 	public int getLocation() {
 		return location;
@@ -25,28 +31,15 @@ public class appointment {
 	public void setResidency(String residency) {
 		this.residency = residency;
 	}
-	public String getdoctorName() {
-		return doctorName;
-	}
-	public void setdoctorNamee(String doctorName) {
-		this.doctorName = doctorName;
-	}
 
 	public void setApptime(String apptime)
 	{
 		this.apptime = apptime;
 	}
-	public void setFullname(String fullname)
-	{
-		this.InsuredFullName = fullname;
-	}
+
 	public String getApptime()
 	{
 		return apptime.substring(0,this.apptime.length()-5);
-	}
-	public String getFullname()
-	{
-		return InsuredFullName;
 	}
 
 	public appointment(String time, String name)

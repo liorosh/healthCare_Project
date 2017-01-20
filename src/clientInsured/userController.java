@@ -1,7 +1,6 @@
 package clientInsured;
 
 import java.io.IOException;
-import java.util.Collection;
 import client.client.ChatClient;
 import client.common.ChatIF;
 import javafx.application.Platform;
@@ -19,30 +18,33 @@ public class UserController implements ChatIF{
 		ChatClient client;
 
 	    @FXML
-	    private TableView<appointment> apptable;
+	    private TableView<Appointment> apptable;
 		@FXML
-	    private TableColumn<appointment, String> date;
+	    private TableColumn<Appointment, String> date;
 
 	    @FXML
-	    private TableColumn<appointment, String> res;
+	    private TableColumn<Appointment, String> res;
 
 	    @FXML
-	    private TableColumn<appointment, String> docName;
+	    private TableColumn<Appointment, String> docName;
 
 	    @FXML
-	    private TableColumn<appointment, String> loc;
+	    private TableColumn<Appointment, String> loc;
 
 	    @FXML
-	    private TableColumn<appointment, String> orderTime;
+	    private TableColumn<Appointment, String> orderTime;
 
 	    @FXML
-	    private Button set;
+	    private Button deleteapp;
 
 	    @FXML
-	    private TextField text;
-
-	    @FXML
-	    private ListView<String> table;
+	    void cancel(ActionEvent event)
+	    {
+	    	if(!(null==this.apptable.getSelectionModel().getSelectedItem())){
+	    		patient patient=(utils.models.patient) client.getUserSession();
+	    	this.client.handleMessageFromClientUI(new clientMessage(clientMessages.cancelAppointment,this.apptable.getSelectionModel().getSelectedItem(),patient.insuredID));
+	    	}
+	    }
 
 	    @FXML
 	    void tryquery(ActionEvent event) {
@@ -55,22 +57,27 @@ public class UserController implements ChatIF{
 		@Override
 		public void display(Object message) {
 			serverMessage temp= (serverMessage) message;
-			text.setText((String) temp.message);
+
+			if(temp.message.equals("deleteSuccess")){
+				this.apptable.getItems().remove(this.apptable.getSelectionModel().getSelectedItem());
+				this.apptable.getSelectionModel().clearSelection();
+			}
+
 			if(temp.message.equals("myapps"))
 			{
-				ObservableList<appointment> hour= FXCollections.observableArrayList();
+				ObservableList<Appointment> hour= FXCollections.observableArrayList();
 				Appointment app;
 				for(Object t:temp.data)
 				{
 					app=(Appointment) t;
-					hour.add(new appointment(app.appTime,app.orderTime,app.doctor.residency,app.getDoctor().firstName/*+" "+app.getDoctor().lastName*/,app.doctor.location));
+					//hour.add(new appointment(app.appTime,app.orderTime,app.doctor.residency,app.getDoctor().firstName+" "+app.getDoctor().lastName,app.doctor.location));
+				hour.add(app);
 				}
-				date.setCellValueFactory(new PropertyValueFactory<appointment, String>("apptime"));
-				orderTime.setCellValueFactory(new PropertyValueFactory<appointment,String>("orderTime"));
-				docName.setCellValueFactory(new PropertyValueFactory<appointment, String>("doctorName"));
-				loc.setCellValueFactory(new PropertyValueFactory<appointment,String>("location"));
-				res.setCellValueFactory(new PropertyValueFactory<appointment, String>("residency"));
-
+				date.setCellValueFactory(new PropertyValueFactory<Appointment, String>("appTime"));
+				orderTime.setCellValueFactory(new PropertyValueFactory<Appointment,String>("orderTime"));
+				docName.setCellValueFactory(new PropertyValueFactory<Appointment, String>("doctorName"));
+				loc.setCellValueFactory(new PropertyValueFactory<Appointment,String>("location"));
+				res.setCellValueFactory(new PropertyValueFactory<Appointment, String>("residency"));
 				Platform.runLater(new Runnable()
 				{
 					public void run(){
@@ -87,9 +94,10 @@ public class UserController implements ChatIF{
 
 	    @FXML
 	    void print(MouseEvent event) {
-	    System.out.println(apptable.getSelectionModel().getSelectedItem().getdoctorName());
-
+	    	System.out.println("12");
+	    	apptable.getSelectionModel().getSelectedItems();
 	    }
 
-
 }
+
+

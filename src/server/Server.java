@@ -162,12 +162,21 @@ public class Server extends AbstractServer
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-
 		break;
+		case cancelAppointment:
+		try {
+			boolean deleteResult=logic.deleteAppointment((Appointment)message.data, (int)message.additionalData);
+			if(deleteResult)
+			results=new serverMessage("deleteSuccess", null);
+			else
+				results=new serverMessage("deleteFailure", null);
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 	default:
 		break;
 	}
-
 
 	 try {
 		 client.sendToClient(results);

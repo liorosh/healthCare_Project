@@ -16,8 +16,8 @@ import utils.models.*;
 
 
 public class MainUIController implements ChatIF{
-	public MainUIController() throws IOException{
-
+	public MainUIController() throws IOException
+	{
 		client= new ChatClient("localhost",5555,this);
 	}
 	ChatClient client;
@@ -36,6 +36,12 @@ public class MainUIController implements ChatIF{
 	Tab set;
 	@FXML
 	Tab myapp;
+	@FXML
+	private Label namelbl;
+
+	public Label getNamelbl() {
+		return namelbl;
+	}
 	@Override
 	public void display(Object message)
 	{

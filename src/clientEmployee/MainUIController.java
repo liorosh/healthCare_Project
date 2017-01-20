@@ -37,13 +37,14 @@ public class MainUIController implements ChatIF{
     private Label welcome;
 
 	@FXML
-	private TableColumn<appointment, String> namecol;
+	private TableColumn<Appointment, String> namecol;
 
 	@FXML
-	private TableColumn<appointment, String> appcol;
+	private TableColumn<Appointment, String> appcol;
 
 	@FXML
-	private TableView<appointment> table;
+	private TableView<Appointment> table;
+
 
 
     @FXML
@@ -64,14 +65,14 @@ public void initialize(){
 		serverMessage Message= (serverMessage) message;
 
 		if(Message.message.equals("docapps")){
-		final ObservableList<appointment> hour= FXCollections.observableArrayList();
+		final ObservableList<Appointment> hour= FXCollections.observableArrayList();
 		Appointment app;
 		for(Object t:Message.data){
 			app=(Appointment) t;
-			hour.add(new appointment(app.appTime,app.patientFirstName+" "+app.patientLastName));
+			hour.add(app);
 		}
-		appcol.setCellValueFactory(new PropertyValueFactory<appointment, String>("apptime"));
-		namecol.setCellValueFactory(new PropertyValueFactory<appointment,String>("fullname"));
+		appcol.setCellValueFactory(new PropertyValueFactory<Appointment, String>("appTime"));
+		namecol.setCellValueFactory(new PropertyValueFactory<Appointment,String>("InsuredFullName"));
 		Platform.runLater(new Runnable(){
 			public void run(){
 				table.setItems(hour);

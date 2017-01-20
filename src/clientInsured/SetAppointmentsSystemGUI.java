@@ -69,6 +69,8 @@ public class SetAppointmentsSystemGUI implements ChatIF{
 		docList.setDisable(false);
 		this.datePicker.setValue(null);
 		this.setApp.setVisible(false);
+    	this.hourList.setVisible(false);
+    	this.datePicker.setDisable(true);
     }
 
 
@@ -83,6 +85,8 @@ public class SetAppointmentsSystemGUI implements ChatIF{
     	this.datePicker.setValue(null);
     	hourList.getItems().remove(0,hourList.getItems().size());
     	this.setApp.setVisible(false);
+    	this.hourList.setVisible(true);
+    	this.datePicker.setDisable(false);
     	}
 
     }
