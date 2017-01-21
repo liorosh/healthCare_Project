@@ -26,6 +26,6 @@
             </Lighting>
          </effect>
       </DatePicker>
-      <Button fx:id="setApp" layoutX="387.0" layoutY="449.0" mnemonicParsing="false" onAction="#appSet" text="Set Appointment" visible="false" />
+      <Button fx:id="setApp" layoutX="388.0" layoutY="481.0" mnemonicParsing="false" onAction="#appSet" text="Set Appointment" />
    </children>
 </AnchorPane>

@@ -2,8 +2,6 @@ package server;
 
 public interface database
 {
-	public final String SELECT_DOCTORS_BY_RESIDENCY = "SELECT EMPLOYEES.FIRSTNAME, EMPLOYEES.LASTNAME, EMPLOYEES.EMPLOYEEID,EMPLOYEES.BRANCH FROM EMPLOYEES WHERE EMPLOYEES.RESIDENCY = ? ";
-
 	public final String SELECT_RESIDENCY = "SELECT DISTINCT EMPLOYEES.RESIDENCY FROM EMPLOYEES where employees.position='doctor' ";
 
 	public final String SELECT_DOCTORS_BY_DATE = " SELECT E.EMPLOYEEID, E.FIRSTNAME, E.LASTNAME, E.BRANCH, E.Residency "
@@ -23,6 +21,7 @@ public interface database
 				+ " group by e.employeeID "
 				+ " ) e on pa.familyDocID=e.employeeID "
 				+ " where pa.insuranceNumber=?; ";
+
 	public final String MAKEAPPOINTMENT = "insert into scheduledappointments values (?,?,?,?,?,?,default)";
 
 	public final String DELETE_APPOINTMENT = " delete from scheduledappointments where scheduledappointments.appTime = ? "
@@ -51,9 +50,9 @@ public interface database
 
 	public final String UPDATE_FAMILY_APPOINTMENTS_TO_DATE = "delete from familyfreeappointments where familyfreeappointments.appTime<now() ";
 
-	public final String FILL_FAMILY_APPOINTMENT_TEMPLATE = "insert into familyfreeappointments values (?,default,default,default,default,default,default)";
+	public final String FILL_FAMILY_APPOINTMENT_TEMPLATE = "insert into familyfreeappointments values (?)";
 
-	public final String FILL_SPECIALIST_APPOINTMENT_TEMPLATE = "insert into specialistfreeappointments values (?,default,default,default,default,default,default); ";
+	public final String FILL_SPECIALIST_APPOINTMENT_TEMPLATE = "insert into specialistfreeappointments values (?); ";
 
 	public final String LOGIN_PATIENT ="SELECT patients.insuranceNumber,patients.firstName,patients.lastName, patients.Email,patients.familyDocID FROM patients where patients.insuranceNumber = ? and patients.password = ? ";
 
@@ -67,6 +66,7 @@ public interface database
 
 	public final String MOVE_APPOINTMENTS_TO_PAST = "insert into pastappointments select * from scheduledappointments "
 				+" where scheduledappointments.appTime < now() ; ";
+
 	public final String DELETE_FROM_SCHEDULED = "delete from scheduledappointments where scheduledappointments.appTime < now() ";
 
 }

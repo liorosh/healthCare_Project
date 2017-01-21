@@ -5,27 +5,9 @@ package server;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
-
 import utils.models.*;
-/*import java.io.*;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;*/
 import ocsf.server.*;
 
 /**
@@ -40,6 +22,8 @@ import ocsf.server.*;
  */
 public class Server extends AbstractServer
 {
+	//Singleton instance to handle the logic and the actual eonnection to the database and queries.
+	//the sever only deals with routing messages back and forth from the server amd clients
 	 serverLogic logic;
 
 
@@ -76,108 +60,120 @@ public class Server extends AbstractServer
    * @param msg The message received from the client.
    * @param client The connection from which the message originated.
    */
+  /*
+   *msg is always of type clientMessage that holds the message and the data needed to execute the action asked
+   *data is the itself, whether its a doctor object or an appointments object
+      */
   public void handleMessageFromClient
-    (/*enum Requests,*/Object msg, ConnectionToClient client)
+    (Object msg, ConnectionToClient client)
   {
 	 clientMessage message=(clientMessage) msg;
+	 //initializing a serverMessage object to send back to the user.
 	 serverMessage results = null;
 	switch(message.clientmessage){
+	//login is divided into two seperate cases of employee and insured beacuse of the two types are seperated in database
 	case insuredLogin:
 		try{
 		Collection<Object> result= logic.loginUser(Integer.parseInt(message.data.toString()), message.additionalData.toString(), clientMessages.insuredLogin);
-		if(null!=result)
-			results= new serverMessage("loginSucces", result);
+		if(null!=result)	//handling the response from the database, either successful or failure
+			results= new serverMessage(serverMessages.loginSucces, result);
 		else
-			results= new serverMessage("loginfailed", result);
+			results= new serverMessage(serverMessages.loginFailure, result);
 		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
+
 			e1.printStackTrace();
 		}
-		break;
+	break;
 	case employeeLogin:
 		try{
 		Collection<Object> result= logic.loginUser(Integer.parseInt(message.data.toString()), message.additionalData.toString(), clientMessages.employeeLogin);
-		if(null!=result)
-			results= new serverMessage("loginSucces", result);
+		if(null!=result)	//handling the response from the database, either successful or failure
+			results= new serverMessage(serverMessages.loginSucces, result);
 		else
-			results= new serverMessage("loginfailed", result);
+			results= new serverMessage(serverMessages.loginFailure, result);
 		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
+
 			e1.printStackTrace();
 		}
-		break;
+	break;
+	//case of getting all the available doctor residencies available.
 	case getResidency:
 		try {
 			Collection<Object> result=logic.getResidency();
-			results= new serverMessage("residencies",result);
+			results= new serverMessage(serverMessages.residenciesList,result);
 		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
+
 			e1.printStackTrace();
 		}
-		break;
+	break;
+	//getting doctors list according to the chosen residency.
 	case detDoctorsList:
 		try {
 			Collection<Object> result=logic.getDoctors(message.data.toString(),Integer.parseInt(message.additionalData.toString()) );
-			results= new serverMessage("doctors",result);
+			results= new serverMessage(serverMessages.doctorsList,result);
 		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
+
 			e1.printStackTrace();
 		}
-		break;
+	break;
+	//getting doctors free appointments after a doctor is chosen
 	case getfreeAppointments:
 		try {
 			Collection<Object> result = logic.getavailableAppointments((doctor) message.data);
-			results= new serverMessage("appointments",result);
+			results= new serverMessage(serverMessages.freeAppointmentsList,result);
 		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
+
 			e1.printStackTrace();
 		}
-		break;
-
+	break;
+	//setting the appointment chosen and received from the client
 	case makeAppointment:
 		try {
-			boolean answer=logic.makeAppointments((Appointment) message.data);
-			results=new serverMessage("makeAppSuccess",null);
-		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			boolean appSetResult=logic.makeAppointments((Appointment) message.data);
+			if(appSetResult)
+				results=new serverMessage(serverMessages.appointmentSet,null);
+		} catch (SQLException e1)
+		{//catch SQL exception of double booking and send back an error message
+			results=new serverMessage(serverMessages.error,null);
 		}
-		break;
+	break;
+	//getting the doctors appointments for today
 	case getDoctorsAppointments:
 		try {
 			Collection<Object> result = logic.getDoctorsAppointmets((int) message.data);
-			results=new serverMessage("docapps",result);
+			results=new serverMessage(serverMessages.doctorsAppointmentsList,result);
 		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
 
-		break;
-		case getpatientAppointments:
-		Collection<Object> result;
-		try {
-			result = logic.getPatientsApoointments((int) message.data);
-			results=new serverMessage("myapps",result);
-		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		break;
-		case cancelAppointment:
+	break;
+	//getting the patients future scheduled appointments
+	case getpatientAppointments:
+		try {
+			Collection<Object> result = logic.getPatientsApoointments((int) message.data);
+			results=new serverMessage(serverMessages.scheduledPatientsAppointments,result);
+		} catch (SQLException e1) {
+
+			e1.printStackTrace();
+		}
+	break;
+	//getting the appointment a user wished to cancel and send the request to the database.
+	case cancelAppointment:
 		try {
 			boolean deleteResult=logic.deleteAppointment((Appointment)message.data, (int)message.additionalData);
-			if(deleteResult)
-			results=new serverMessage("deleteSuccess", null);
+			if(deleteResult){
+				results=new serverMessage(serverMessages.deleteSuccess, null);
+			}
 			else
-				results=new serverMessage("deleteFailure", null);
+				results=new serverMessage(serverMessages.deleteFailure, null);
 		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
+
 			e1.printStackTrace();
 		}
 	default:
-		break;
+	break;
 	}
-
+//after a message has been made it is sent back to the requesting client.
 	 try {
 		 client.sendToClient(results);
 	 } catch (IOException e) {
@@ -193,9 +189,10 @@ public class Server extends AbstractServer
    */
   protected void serverStarted()
   {
-	 /* Calendar today = Calendar.getInstance();
-	  today.set(Calendar.HOUR_OF_DAY, 00);
-	  today.set(Calendar.MINUTE, 00);
+	  //implementing a timed call to the update function in order to update database at the end of each day.
+	  Calendar today = Calendar.getInstance();
+	  today.set(Calendar.HOUR_OF_DAY, 0);
+	  today.set(Calendar.MINUTE, 3);
 	  today.set(Calendar.SECOND, 0);
 		new Timer().schedule(
 			    new TimerTask() {
@@ -203,15 +200,14 @@ public class Server extends AbstractServer
 					public void run() {
 						try {
 							logic.updatefreeAppointments();
-
-							System.out.println("yes i did!");
+							System.out.println("executing Midnight Maintenance...");
 						} catch (SQLException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
 
-			    },today.getTime() , TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS));*/
+			    },today.getTime() , TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS));
     System.out.println
       ("Server listening for connections on port " + getPort());
   }

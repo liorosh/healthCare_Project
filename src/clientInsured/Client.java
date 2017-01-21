@@ -16,10 +16,10 @@ public class Client extends Application {
 			AnchorPane pane = FXMLLoader.load( url );
 			Scene scene = new Scene( pane );
 			 // setting the stage
+			primaryStage.setOnCloseRequest(e -> System.exit(0));
 			primaryStage.setScene(scene);
 			primaryStage.setTitle( "Good Health Services" );
 			primaryStage.show();
-
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

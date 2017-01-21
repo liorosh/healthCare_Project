@@ -11,13 +11,13 @@ public class Employee extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-			//ChatClient client= new ChatClient("localhost",5555,this);
 			URL url = getClass().getResource("DocLoginUI.fxml");
 			AnchorPane pane = FXMLLoader.load( url );
 			Scene scene = new Scene( pane );
 			 // setting the stage
+			primaryStage.setOnCloseRequest(e -> System.exit(0));
 			primaryStage.setScene(scene);
-			primaryStage.setTitle( "Hello World Demo" );
+			primaryStage.setTitle( "Good Health Employees" );
 			primaryStage.show();
 
 		} catch(Exception e) {

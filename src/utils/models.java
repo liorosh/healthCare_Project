@@ -5,32 +5,32 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.TimerTask;
+//TODO sort ot file,make sure everything is needed,delete if not.
+//in addition, need to add server messages enum
+public interface models
+{
 
-import utils.models.Appointment;
-
-public interface models {
-
-	public class Message implements Serializable {
+	@SuppressWarnings("serial")
+	public class Message implements Serializable
+	{
 
 	}
 
+	@SuppressWarnings("serial")
 	public class serverMessage extends Message
 	{
 
 		public Collection<Object> data;
-		public Object message;
+		public serverMessages message;
 
-		public serverMessage(String message, Collection<Object> result) {
+		public serverMessage(serverMessages message, Collection<Object> result)
+		{
 			this.data= result;
 			this.message=message;
 		}
-
-
-
-
 	}
 
+	@SuppressWarnings("serial")
 	public class clientMessage extends Message{
 		public clientMessages clientmessage;
 		public Object data;
@@ -47,6 +47,7 @@ public interface models {
 
 
 
+	@SuppressWarnings("serial")
 	public class Appointment implements Serializable
 	{
 		public String appTime;
@@ -88,10 +89,10 @@ public interface models {
 		}
 
 
-		public int getLocation() {
+		public String getLocation() {
 			return doctor.location;
 		}
-		public void setLocation(int location) {
+		public void setLocation(String location) {
 			doctor.location = location;
 		}
 		public Appointment(String apptime , int ID, doctor doc)
@@ -147,6 +148,7 @@ public interface models {
 
 	}
 
+	@SuppressWarnings("serial")
 	class user implements Serializable{
 
 		public String firstName;
@@ -161,6 +163,7 @@ public interface models {
 		public user(){}
 	}
 
+	@SuppressWarnings("serial")
 	class patient extends user{
 		public int insuredID;
 		int docotrsID;
@@ -176,6 +179,7 @@ public interface models {
 
 
 
+	@SuppressWarnings("serial")
 	class employee extends user
 	{
 		public int id;
@@ -192,22 +196,23 @@ public interface models {
 
 	}
 
+	@SuppressWarnings("serial")
 	class doctor extends employee
 	{
 		public String residency;
 
-		public int location;
+		public String location;
 
 		public doctor(int id) {
 			super(id);
 		}
-		public doctor(int id,String residnecy, int location, String first,String last,String mail) {
+		public doctor(int id,String residnecy, String location, String first,String last,String mail) {
 			super(first,last,id, mail);
 			this.residency=residnecy;
 			this.location=location;
 
 		}
-		public doctor(int id, String res, int branch) {
+		public doctor(int id, String res, String branch) {
 			super(id);
 			this.residency=res;
 			this.location=branch;
@@ -218,6 +223,7 @@ public interface models {
 		}
 	}
 
+	@SuppressWarnings("serial")
 	class familyDoctor extends doctor
 	{
 
@@ -226,20 +232,21 @@ public interface models {
 			// TODO Auto-generated constructor stub
 		}
 
-		public familyDoctor(int i, String string, int j) {
+		public familyDoctor(int i, String string, String j) {
 			super(i,string,j);
 		}
 
-		public familyDoctor(int id, String residency, int location, String firstname, String lastname, String mail) {
+		public familyDoctor(int id, String residency, String location, String firstname, String lastname, String mail) {
 			super(id,residency,location,firstname,lastname,mail);
 		}
 
-		public familyDoctor(int id, String residency, int location, String firstname, String lastname) {
+		public familyDoctor(int id, String residency, String location, String firstname, String lastname) {
 			super(id,residency,location,firstname,lastname,null);
 		}
 
 	}
 
+	@SuppressWarnings("serial")
 	class specialistDoctor extends doctor
 	{
 
@@ -248,18 +255,18 @@ public interface models {
 			super(i);
 			// TODO Auto-generated constructor stub
 		}
-		public specialistDoctor(int i, String string, int j) {
+		public specialistDoctor(int i, String string, String j) {
 			super(i,string,j);
 		}
-		public specialistDoctor(int id, String residency, int location, String firstname, String lastname, String mail) {
+		public specialistDoctor(int id, String residency, String location, String firstname, String lastname, String mail) {
 			super(id,residency,location,firstname,lastname,mail);
 		}
-		public specialistDoctor(int id, String residency, int location, String firstname, String lastname) {
+		public specialistDoctor(int id, String residency, String location, String firstname, String lastname) {
 			super(id,residency,location,firstname,lastname,null);
 		}
 
 	}
 
+	enum serverMessages{loginSucces,loginFailure,residenciesList,doctorsList,freeAppointmentsList,doctorsAppointmentsList,scheduledPatientsAppointments, deleteSuccess,deleteFailure,appointmentSet, error,success};
 	enum clientMessages{getResidency,detDoctorsList,getfreeAppointments,makeAppointment,cancelAppointment,Login,getDoctorsAppointments,employeeLogin,insuredLogin,getpatientAppointments};
-
 }

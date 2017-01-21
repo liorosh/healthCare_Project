@@ -11,18 +11,9 @@
       <TableView fx:id="table" layoutX="59.0" layoutY="64.0" prefHeight="218.0" prefWidth="358.0">
         <columns>
           <TableColumn fx:id="appcol" prefWidth="125.0" text="Appointment Time"/>
-
           <TableColumn fx:id="namecol" prefWidth="143.0" text="Patient Name"/>
         </columns>
-         <effect>
-            <Lighting bumpInput="$null">
-               <light>
-                  <Light.Distant />
-               </light>
-            </Lighting>
-         </effect>
       </TableView>
-      <Button fx:id="btn" layoutX="82.0" layoutY="23.0" mnemonicParsing="false" onAction="#getapps" text="Button" />
       <Label fx:id="welcome" layoutX="291.0" layoutY="2.0" />
    </children>
 </AnchorPane>

@@ -29,6 +29,11 @@ public class ChatClient extends AbstractClient
    * the display method in the client.
    */
   ChatIF clientUI;
+
+  /**
+   * userSession acts as a session validator in order to make sure a proper login has been made.
+   * all of the user's details are saved in the session for identifying the user thats connected.
+   */
   user userSession;
   //Constructors ****************************************************
 
@@ -63,9 +68,11 @@ public class ChatClient extends AbstractClient
    */
   public void handleMessageFromServer(Object msg)
   {
+	  //reading the messages outgoing from the server.
+	  //when message is login suucess, stores info in userSession
 	  serverMessage message =(serverMessage) msg;
 	  message=(serverMessage) msg;
-	 if(message.message.equals("loginSucces"))
+	 if(message.message==serverMessages.loginSucces)
 		  this.userSession=(user) message.data.iterator().next();
 	  clientUI.display(message);
   }
