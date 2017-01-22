@@ -128,11 +128,11 @@ public class SetAppointmentsSystemGUI implements ChatIF
     	{
     		//get the selected appointment and the user id from session
 	    	Appointment selectedAppointment=this.hourList.getSelectionModel().getSelectedItem();
-	    	patient session=(patient)this.client.getUserSession();
+	    	patient session = (patient) this.client.getUserSession();
 	    	//set userid to the appointment
 	    	selectedAppointment.setInsuredID(session.getInsuredID());
 	    	//compose client message and send to server
-	    	client.handleMessageFromClientUI(new clientMessage(clientMessages.makeAppointment,selectedAppointment,null));
+	    	client.handleMessageFromClientUI(new clientMessage(clientMessages.makeAppointment,new Appointment(selectedAppointment.getAppTime(),session.getInsuredID(),selectedAppointment.getDoctor()),null));
     	}
     }
 
