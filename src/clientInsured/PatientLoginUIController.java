@@ -78,7 +78,7 @@ public class PatientLoginUIController implements ChatIF{
 			System.out.println("why?");
 		}
 		serverMessage serverMessage= (serverMessage) message;
-		switch(serverMessage.message)
+		switch(serverMessage.getMessage())
 		{
 		case loginFailure:
 			System.out.println("not logged in");
@@ -105,8 +105,8 @@ public class PatientLoginUIController implements ChatIF{
 					MainUIController MainUIController = (MainUIController) loader.getController();
 					MainUIController.client=client;
 					//set welcome label.
-					this.client.setClient(MainUIController.makeTabController);
-					MainUIController.getNamelbl().setText(client.getUserSession().firstName+ " "+ client.getUserSession().lastName);
+					this.client.setClient(MainUIController.getMakeTabController());
+					MainUIController.getNamelbl().setText(client.getUserSession().getFirstName()+ " "+ client.getUserSession().getLastName());
 					Scene board = new Scene(home_page_parent);
 					Stage board_stage = (Stage)  login.getScene().getWindow();
 					//switch to the new scene and close login screen.

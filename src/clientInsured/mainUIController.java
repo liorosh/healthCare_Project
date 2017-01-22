@@ -1,4 +1,4 @@
-package clientInsured;
+ package clientInsured;
 
 import java.io.IOException;
 import client.client.ChatClient;
@@ -13,42 +13,45 @@ import utils.models.*;
 
 public class MainUIController implements ChatIF
 {
+	//chatclient instance to communicate with server.
 	ChatClient client;
 
+	//GUI objects, including table columns and welcome label
 	@FXML
-	Parent appointments;
+	private Parent appointments;
 
 	@FXML
-	Parent deleteTab;
+	private Parent deleteTab;
 
 	@FXML
-	UserController deleteTabController;
+	private MyAppsController deleteTabController;
 
 	@FXML
-	SetAppointmentsSystemGUI makeTabController;
+	private SetAppointmentsSystemGUI makeTabController;
 
 	@FXML
-	Tab set;
+	private Tab set;
 
 	@FXML
-	Tab myapp;
+	private Tab myapp;
 
 	@FXML
-	Label namelbl;
-
+	private Label namelbl;
 
 	@FXML
-	AnchorPane anchor;
+	private AnchorPane anchor;
 
 	@FXML
 	private TabPane tabs;
 
-
+/* initialize is creating a tab listener to detect tab change and pass the client to the controller in focus.
+ * depending on the tab it resets the GUI and asks for updated info from server.
+ * mainUI has no logic in it, it is simply enclosing the controllers of the tabs and handles client passing.
+ */
 	@FXML
 	public void initialize() throws IOException
 	{
-		System.out.println("mainui");
-		makeTabController.client=client;
+		getMakeTabController().client=client;
 		this.set.setDisable(false);
 		this.myapp.setDisable(false);
 		getTabs().getSelectionModel().selectedItemProperty().addListener(
@@ -58,29 +61,27 @@ public class MainUIController implements ChatIF
 		        public void changed(ObservableValue<? extends Tab> ov, Tab set, Tab myapp)
 		        {
 		        	if(getTabs().getSelectionModel().getSelectedItem().getId().equals("myapp"))
-		        	{
+		        	{	//set client to myappointment tab, reset all of the current tab fields and initialize next tab data
 		        		deleteTabController.client=client;
 		        		client.setClient(deleteTabController);
 		        		patient patient=(patient) client.getUserSession();
-		        		deleteTabController.client.handleMessageFromClientUI(new clientMessage(clientMessages.getpatientAppointments,patient.insuredID,null));
-		        		makeTabController.getDatePicker().setValue(null);
-		        		makeTabController.getDocList().getItems().remove(0, makeTabController.getDocList().getItems().size());
-		        		makeTabController.getHourList().getItems().remove(0,makeTabController.getHourList().getItems().size());
-		        		makeTabController.getResList().getSelectionModel().clearSelection();
-		        		System.out.print("1");
+		        		deleteTabController.client.handleMessageFromClientUI(new clientMessage(clientMessages.getpatientAppointments,patient.getInsuredID(),null));
+		        		getMakeTabController().getDatePicker().setValue(null);
+		        		getMakeTabController().getDocList().getItems().remove(0, getMakeTabController().getDocList().getItems().size());
+		        		getMakeTabController().getHourList().getItems().remove(0,getMakeTabController().getHourList().getItems().size());
+		        		getMakeTabController().getResList().getSelectionModel().clearSelection();
 		        	}
 		        	else if(getTabs().getSelectionModel().getSelectedItem().getId().equals("set"))
-		        	{
-		        		makeTabController.client=client;
-		        		client.setClient(makeTabController);
-		        		makeTabController.client.handleMessageFromClientUI(new clientMessage(clientMessages.getResidency,null,null));
-		        		System.out.print("2");
+		        	{	//set client to set appointment tab and initialize data.
+		        		getMakeTabController().client=client;
+		        		client.setClient(getMakeTabController());
+		        		getMakeTabController().client.handleMessageFromClientUI(new clientMessage(clientMessages.getResidency,null,null));
 		        	}
 		        }
 		    }
 		);
 	}
-
+//object getters
 	public Label getNamelbl()
 	{
 		return namelbl;
@@ -93,4 +94,10 @@ public class MainUIController implements ChatIF
 
 	@Override
 	public void display(Object message){}
+	public SetAppointmentsSystemGUI getMakeTabController() {
+		return makeTabController;
+	}
+	public void setMakeTabController(SetAppointmentsSystemGUI makeTabController) {
+		this.makeTabController = makeTabController;
+	}
 }

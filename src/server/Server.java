@@ -70,11 +70,11 @@ public class Server extends AbstractServer
 	 clientMessage message=(clientMessage) msg;
 	 //initializing a serverMessage object to send back to the user.
 	 serverMessage results = null;
-	switch(message.clientmessage){
+	switch(message.getClientmessage()){
 	//login is divided into two seperate cases of employee and insured beacuse of the two types are seperated in database
 	case insuredLogin:
 		try{
-		Collection<Object> result= logic.loginUser(Integer.parseInt(message.data.toString()), message.additionalData.toString(), clientMessages.insuredLogin);
+		Collection<Object> result= logic.loginUser(Integer.parseInt(message.getData().toString()), message.getAdditionalData().toString(), clientMessages.insuredLogin);
 		if(null!=result)	//handling the response from the database, either successful or failure
 			results= new serverMessage(serverMessages.loginSucces, result);
 		else
@@ -86,7 +86,7 @@ public class Server extends AbstractServer
 	break;
 	case employeeLogin:
 		try{
-		Collection<Object> result= logic.loginUser(Integer.parseInt(message.data.toString()), message.additionalData.toString(), clientMessages.employeeLogin);
+		Collection<Object> result= logic.loginUser(Integer.parseInt(message.getData().toString()), message.getAdditionalData().toString(), clientMessages.employeeLogin);
 		if(null!=result)	//handling the response from the database, either successful or failure
 			results= new serverMessage(serverMessages.loginSucces, result);
 		else
@@ -109,7 +109,7 @@ public class Server extends AbstractServer
 	//getting doctors list according to the chosen residency.
 	case detDoctorsList:
 		try {
-			Collection<Object> result=logic.getDoctors(message.data.toString(),Integer.parseInt(message.additionalData.toString()) );
+			Collection<Object> result=logic.getDoctors(message.getData().toString(),Integer.parseInt(message.getAdditionalData().toString()) );
 			results= new serverMessage(serverMessages.doctorsList,result);
 		} catch (SQLException e1) {
 
@@ -119,7 +119,7 @@ public class Server extends AbstractServer
 	//getting doctors free appointments after a doctor is chosen
 	case getfreeAppointments:
 		try {
-			Collection<Object> result = logic.getavailableAppointments((doctor) message.data);
+			Collection<Object> result = logic.getavailableAppointments((doctor) message.getData());
 			results= new serverMessage(serverMessages.freeAppointmentsList,result);
 		} catch (SQLException e1) {
 
@@ -129,7 +129,7 @@ public class Server extends AbstractServer
 	//setting the appointment chosen and received from the client
 	case makeAppointment:
 		try {
-			boolean appSetResult=logic.makeAppointments((Appointment) message.data);
+			boolean appSetResult=logic.makeAppointments((Appointment) message.getData());
 			if(appSetResult)
 				results=new serverMessage(serverMessages.appointmentSet,null);
 		} catch (SQLException e1)
@@ -140,7 +140,7 @@ public class Server extends AbstractServer
 	//getting the doctors appointments for today
 	case getDoctorsAppointments:
 		try {
-			Collection<Object> result = logic.getDoctorsAppointmets((int) message.data);
+			Collection<Object> result = logic.getDoctorsAppointmets((int) message.getData());
 			results=new serverMessage(serverMessages.doctorsAppointmentsList,result);
 		} catch (SQLException e1) {
 
@@ -150,7 +150,7 @@ public class Server extends AbstractServer
 	//getting the patients future scheduled appointments
 	case getpatientAppointments:
 		try {
-			Collection<Object> result = logic.getPatientsApoointments((int) message.data);
+			Collection<Object> result = logic.getPatientsApoointments((int) message.getData());
 			results=new serverMessage(serverMessages.scheduledPatientsAppointments,result);
 		} catch (SQLException e1) {
 
@@ -160,7 +160,7 @@ public class Server extends AbstractServer
 	//getting the appointment a user wished to cancel and send the request to the database.
 	case cancelAppointment:
 		try {
-			boolean deleteResult=logic.deleteAppointment((Appointment)message.data, (int)message.additionalData);
+			boolean deleteResult=logic.deleteAppointment((Appointment)message.getData(), (int)message.getAdditionalData());
 			if(deleteResult){
 				results=new serverMessage(serverMessages.deleteSuccess, null);
 			}

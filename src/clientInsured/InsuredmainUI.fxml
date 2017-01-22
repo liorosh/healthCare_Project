@@ -17,7 +17,7 @@
             </Tab>
             <Tab fx:id="myapp" closable="false" disable="true" text="My Appointments">
                <content>
-                  <fx:include fx:id="deleteTab" source="user.fxml" />
+                  <fx:include fx:id="deleteTab" source="MyApps.fxml" />
                </content>
             </Tab>
          </tabs>

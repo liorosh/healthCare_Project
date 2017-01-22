@@ -77,7 +77,7 @@ public class LoginUIController implements ChatIF{
 			System.out.println("why?");
 		}
 		serverMessage serverMessage= (serverMessage) message;
-		switch(serverMessage.message)
+		switch(serverMessage.getMessage())
 		{
 		case loginFailure:
 			Platform.runLater(new Runnable()
@@ -101,10 +101,10 @@ public class LoginUIController implements ChatIF{
 					//crating the new controller and sending the next request to server.
 					MainUIController MainUIController = (MainUIController) loader.getController();
 					employee employee=(employee) client.getUserSession();
-					client.handleMessageFromClientUI(new clientMessage(clientMessages.getDoctorsAppointments,employee.id,null));
+					client.handleMessageFromClientUI(new clientMessage(clientMessages.getDoctorsAppointments,employee.getId(),null));
 					MainUIController.client = client;
 					//set welcome label.
-					MainUIController.getWelcome().setText("Welcome Docotor "+ client.getUserSession().firstName+ " "+ client.getUserSession().lastName);
+					MainUIController.getWelcome().setText("Welcome Docotor "+ client.getUserSession().getFirstName()+ " "+ client.getUserSession().getLastName());
 					this.client.setClient(MainUIController);
 					Scene board = new Scene(home_page_parent);
 					Stage board_stage = (Stage)  login.getScene().getWindow();

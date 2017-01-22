@@ -72,8 +72,8 @@ public class ChatClient extends AbstractClient
 	  //when message is login suucess, stores info in userSession
 	  serverMessage message =(serverMessage) msg;
 	  message=(serverMessage) msg;
-	 if(message.message==serverMessages.loginSucces)
-		  this.userSession=(user) message.data.iterator().next();
+	 if(message.getMessage()==serverMessages.loginSucces)
+		  this.userSession=(user) message.getData().iterator().next();
 	  clientUI.display(message);
   }
 

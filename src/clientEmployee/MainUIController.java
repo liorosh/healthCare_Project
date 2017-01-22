@@ -16,16 +16,16 @@ public class MainUIController implements ChatIF{
 
 	//GUI objects, including table columns and welcome label
     @FXML
-    private Label welcome;
+     Label welcome;
 
 	@FXML
-	private TableColumn<Appointment, String> namecol;
+	 TableColumn<Appointment, String> namecol;
 
 	@FXML
-	private TableColumn<Appointment, String> appcol;
+	 TableColumn<Appointment, String> appcol;
 
 	@FXML
-	private TableView<Appointment> table;
+	 TableView<Appointment> table;
 /*
  * display function is reposible on getting messages from server.
  * in this case its only job is to display the doctors appointments once doctor is logged in
@@ -34,11 +34,11 @@ public class MainUIController implements ChatIF{
 	public void display(Object message)
 	{
 		serverMessage Message= (serverMessage) message;
-		if(serverMessages.doctorsAppointmentsList==Message.message)
+		if(serverMessages.doctorsAppointmentsList==Message.getMessage())
 		{	//doctorAppointments is being inserted with appointments received from the server and is inserted into table
 			ObservableList<Appointment> doctorAppointments= FXCollections.observableArrayList();
 			Appointment app;
-			for(Object t:Message.data)//loop over appointments
+			for(Object t:Message.getData())//loop over appointments
 			{
 				app=(Appointment) t;
 				doctorAppointments.add(app);

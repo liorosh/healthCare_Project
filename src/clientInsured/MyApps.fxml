@@ -4,7 +4,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="539.0" prefWidth="634.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="clientInsured.UserController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="539.0" prefWidth="634.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="clientInsured.MyAppsController">
    <children>
       <Button fx:id="deleteapp" layoutX="242.0" layoutY="257.0" mnemonicParsing="false" onAction="#cancel" text="Delete Appointment" />
       <TableView fx:id="apptable" editable="true" layoutX="5.0" layoutY="22.0" prefHeight="200.0" prefWidth="603.0">

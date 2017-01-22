@@ -105,12 +105,12 @@ public class serverLogic
 		Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/softeng","root","1234");
 		PreparedStatement stmt=conn.prepareStatement(database.MAKEAPPOINTMENT);
 		 //inserting the values to the query and execute
-		stmt.setString(1, appointment.appTime);
-		stmt.setString(2, appointment.orderTime);
-		stmt.setInt(3, appointment.insuredID);
-		stmt.setString(4, appointment.getDoctor().location);
-		stmt.setInt(5, appointment.getDoctor().id);
-		stmt.setString(6, appointment.getDoctor().residency);
+		stmt.setString(1, appointment.gettAppointmentTime());
+		stmt.setString(2, appointment.getAppOrderTime());
+		stmt.setInt(3, appointment.getInsuredID());
+		stmt.setString(4, appointment.getDoctor().getLocation());
+		stmt.setInt(5, appointment.getDoctor().getId());
+		stmt.setString(6, appointment.getResidency());
 		stmt.execute();
 		stmt.close();
 		conn.close();
@@ -174,8 +174,8 @@ public class serverLogic
 		Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/softeng","root","1234");
 		PreparedStatement stmt=conn.prepareStatement(database.DELETE_APPOINTMENT);
 		//inserting values needed for query
-		stmt.setString(1, appointment.appTime);
-		stmt.setInt(2, appointment.doctor.id);
+		stmt.setString(1, appointment.gettAppointmentTime());
+		stmt.setInt(2, appointment.getDoctor().getId());
 		stmt.setInt(3, insuredId);
 		stmt.execute();
 		stmt.close();
@@ -227,7 +227,7 @@ public class serverLogic
 			stmt = conn.prepareStatement(database.GET_FREE_FAMILY_APPOINTMENTS);
 		else if(doctorId instanceof specialistDoctor)	//in case of a specialist doctor
 			stmt=conn.prepareStatement(database.GET_FREE_SPECIALIST_APPOINTMENTS);
-		stmt.setInt(1, doctorId.id);
+		stmt.setInt(1, doctorId.getId());
 		rs = stmt.executeQuery();
 		//organize the appointments in a coolection and send back to client
 		while(rs.next())
