@@ -35,7 +35,7 @@ public class MyAppsController implements ChatIF
 	    private TableColumn<Appointment, String> orderTime;
 
 	    @FXML
-	    private Button deleteapp;
+	    private Button deleteApp;
 
 /* cancel is a handler for the cancel appointment app
  * according to the selected row it sends the appointment to the server for cancellation

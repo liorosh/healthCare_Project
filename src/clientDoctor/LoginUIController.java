@@ -1,4 +1,4 @@
-package clientEmployee;
+package clientDoctor;
 
 import java.io.IOException;
 import client.client.ChatClient;
@@ -99,7 +99,7 @@ public class LoginUIController implements ChatIF{
 					loader.setLocation(getClass().getResource("DocmainUI.fxml"));
 					Parent home_page_parent = loader.load();
 					//crating the new controller and sending the next request to server.
-					MainUIController MainUIController = (MainUIController) loader.getController();
+					DoctorMainUIController MainUIController = (DoctorMainUIController) loader.getController();
 					employee employee=(employee) client.getUserSession();
 					client.handleMessageFromClientUI(new clientMessage(clientMessages.getDoctorsAppointments,employee.getId(),null));
 					MainUIController.client = client;

@@ -11,17 +11,17 @@ import javafx.scene.layout.AnchorPane;
 import utils.models.*;
 
 
-public class MainUIController implements ChatIF
+public class PatientMainUIController implements ChatIF
 {
 	//chatclient instance to communicate with server.
 	ChatClient client;
 
 	//GUI objects, including table columns and welcome label
-	@FXML
+	/*@FXML
 	private Parent appointments;
 
 	@FXML
-	private Parent deleteTab;
+	private Parent deleteTab;*/
 
 	@FXML
 	private MyAppsController deleteTabController;
@@ -38,8 +38,8 @@ public class MainUIController implements ChatIF
 	@FXML
 	private Label namelbl;
 
-	@FXML
-	private AnchorPane anchor;
+	/*@FXML
+	private AnchorPane anchor;*/
 
 	@FXML
 	private TabPane tabs;
@@ -62,7 +62,7 @@ public class MainUIController implements ChatIF
 		        {
 		        	if(getTabs().getSelectionModel().getSelectedItem().getId().equals("myapp"))
 		        	{	//set client to myappointment tab, reset all of the current tab fields and initialize next tab data
-		        		deleteTabController.client=client;
+		        		deleteTabController.client = client;
 		        		client.setClient(deleteTabController);
 		        		patient patient=(patient) client.getUserSession();
 		        		deleteTabController.client.handleMessageFromClientUI(new clientMessage(clientMessages.getpatientAppointments,patient.getInsuredID(),null));
@@ -73,7 +73,7 @@ public class MainUIController implements ChatIF
 		        	}
 		        	else if(getTabs().getSelectionModel().getSelectedItem().getId().equals("set"))
 		        	{	//set client to set appointment tab and initialize data.
-		        		getMakeTabController().client=client;
+		        		getMakeTabController().client = client;
 		        		client.setClient(getMakeTabController());
 		        		getMakeTabController().client.handleMessageFromClientUI(new clientMessage(clientMessages.getResidency,null,null));
 		        	}
@@ -96,8 +96,5 @@ public class MainUIController implements ChatIF
 	public void display(Object message){}
 	public SetAppointmentsSystemGUI getMakeTabController() {
 		return makeTabController;
-	}
-	public void setMakeTabController(SetAppointmentsSystemGUI makeTabController) {
-		this.makeTabController = makeTabController;
 	}
 }

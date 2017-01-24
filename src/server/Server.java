@@ -41,10 +41,7 @@ public class Server extends AbstractServer
    *
    * @param port The port number to connect on.
    */
-  public Server(int port)
-  {
-    super(port);
-  }
+
   public Server(int port,serverLogic logic)
   {
 	  super(port);
@@ -257,4 +254,4 @@ public class Server extends AbstractServer
     }
   }
 }
-//End of EchoServer class
+//End of Server class

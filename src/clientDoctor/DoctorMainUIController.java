@@ -1,16 +1,18 @@
-package clientEmployee;
+package clientDoctor;
 
 import client.client.ChatClient;
 import client.common.ChatIF;
 import javafx.application.Platform;
 import javafx.collections.*;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import utils.models.*;
 
 
-public class MainUIController implements ChatIF{
+public class DoctorMainUIController implements ChatIF
+{
 	//client object for sending messages to server.
 	ChatClient client;
 
@@ -26,6 +28,9 @@ public class MainUIController implements ChatIF{
 
 	@FXML
 	 TableView<Appointment> table;
+
+    @FXML
+    private Button checkNew;
 /*
  * display function is reposible on getting messages from server.
  * in this case its only job is to display the doctors appointments once doctor is logged in
@@ -54,8 +59,19 @@ public class MainUIController implements ChatIF{
 			});
 		}
 	}
+
+	@FXML
+
 	public Label getWelcome()
 	{
 		return welcome;
 	}
+/*fetchNewAppointments is responsible for updating the list of appointments in
+ * case any appointment was scheduled after the doctor has signed in
+ */
+    @FXML
+    void fetchNewAppointments(ActionEvent event) {
+    	employee employee=(employee) client.getUserSession();
+		client.handleMessageFromClientUI(new clientMessage(clientMessages.getDoctorsAppointments,employee.getId(),null));
+    }
 }

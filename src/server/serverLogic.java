@@ -19,7 +19,6 @@ public class serverLogic
 {
 	//serverLogic is a singleton and is only created once
 	private static serverLogic instance=null;
-	 serverLogic(){}
 	 public static serverLogic getInstance()
 	 {
 		 if (null==instance)

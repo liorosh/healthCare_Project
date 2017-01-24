@@ -102,7 +102,7 @@ public class PatientLoginUIController implements ChatIF{
 					loader.setLocation(getClass().getResource("InsuredmainUI.fxml"));
 					Parent home_page_parent = loader.load();
 					//crating the new controller and sending the next request to server.
-					MainUIController MainUIController = (MainUIController) loader.getController();
+					PatientMainUIController MainUIController = (PatientMainUIController) loader.getController();
 					MainUIController.client=client;
 					//set welcome label.
 					this.client.setClient(MainUIController.getMakeTabController());
